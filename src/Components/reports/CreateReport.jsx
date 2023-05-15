@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Form as RouterForm } from "react-router-dom";
 import { Divider, Form, Grid, Header, Select } from "semantic-ui-react";
-import { axiosReports } from "../utils/axiosClients";
+import { axiosReports, csrfAxios } from "../utils/axiosClients";
 import fetchField from "./fetchField";
 export default function CreateReport() {
   const [isLoading, setisLoading] = useState(true);
-  const [selectedType, setSelectedType] = useState(1);
-  const [issues, setIssues] = useState();
-  const [filteredIssues, setFilteredIssues] = useState("");
   const [departments, setDepartments] = useState();
   const [issueTypes, setIssueTypes] = useState();
+  const [issues, setIssues] = useState();
+  const [selectedType, setSelectedType] = useState(1);
+  const [filteredIssues, setFilteredIssues] = useState("");
 
+  csrfAxios();
   //PLACEHOLDERS
   function filterIssues(issues, type_id) {
     return issues.filter((issue) => issue.type_id === type_id);
   }
   const getFields = async () => {
-    const depRequest = await axiosReports("/field/departments");
-    const typesRequest = await axiosReports("/field/issue_types");
-    const IssueRequest = await axiosReports("/field/issues");
+    const deps = await fetchField("departments");
+    const types = await fetchField("issue_types");
+    const issues = await fetchField("issues");
 
-    setDepartments(depRequest.data);
-    setIssueTypes(typesRequest.data);
-    setIssues(IssueRequest.data);
+    setDepartments(deps);
+    setIssueTypes(types);
+    setIssues(issues);
   };
 
-  console.log("deps", departments);
-  console.log("types", issueTypes);
-  console.log("iss", issues);
   /* async function getField(field) {
     const response = await axiosReports(`/field/${field}`);
     const data = response.data;
@@ -35,21 +33,27 @@ export default function CreateReport() {
     return data;
   } */
   useEffect(() => {
-    getFields();
-    if (departments && issues && issueTypes) {
+    if (!departments && !issues && !issueTypes) {
+      getFields();
+    } else if (departments && issues && issueTypes) {
       setisLoading(false);
+      console.log("deps", departments);
+      console.log("types", issueTypes);
+      console.log("iss", issues);
+      console.log();
     }
-  }, []);
-  console.log(departments);
+  }, [departments, issueTypes, issues]);
   useEffect(() => {
     if (issues) {
       setFilteredIssues([...filteredIssues, filterIssues(issues, selectedType.id)]);
+      console.log(filteredIssues);
     }
   }, [selectedType]);
 
   function onChangeType(e, { value }) {
     setSelectedType({ ...selectedType, value });
   }
+
   if (isLoading) {
     return <div>"Loading"</div>;
   }
