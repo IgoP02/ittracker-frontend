@@ -20,7 +20,7 @@ import { isLogged } from "./Components/utils/manageLogin";
 import SuccessPage from "./Components/reports/SuccessPage";
 export const LoginContext = createContext();
 function Main() {
-  const [loggedIn, setLoggedIn] = useState(isLogged());
+  const [loggedIn, setLoggedIn] = useState(isLogged(false));
   const route = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<GlobalLayout />}>
@@ -29,7 +29,7 @@ function Main() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute user={loggedIn}>
+            <ProtectedRoute loggedIn={loggedIn}>
               <AdminLayout />
             </ProtectedRoute>
           }>

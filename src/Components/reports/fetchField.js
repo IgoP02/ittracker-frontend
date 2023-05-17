@@ -1,4 +1,4 @@
-import { axiosReports, csrfAxios } from "../utils/axiosClients";
+import { AxiosAdmin, csrfAxios } from "../utils/axiosClients";
 
 /**
  * 
@@ -6,9 +6,8 @@ import { axiosReports, csrfAxios } from "../utils/axiosClients";
  * @returns {Array} query results as array
  */
 export default async function fetchField(field) {
-        const response = await axiosReports(`/field/${field}`);
-        const data = response.data;
-        console.log("mapa",data)
+        const response = await AxiosAdmin(`/field/${field}`);
+        const data = await response.data;
         return data;
 
 

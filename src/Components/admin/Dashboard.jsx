@@ -1,5 +1,3 @@
-import React, { useContext } from "react";
-import { LoginContext } from "../../main";
 import {
   Chart as ChartJS,
   ArcElement,

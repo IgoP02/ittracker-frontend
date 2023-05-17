@@ -65,7 +65,6 @@ export default function LogPopup({ isOpen, setIsOpen }) {
       <Form style={{ marginBottom: "4em", marginTop: "2em" }} size="huge" as={routerForm}>
         <Grid centered>
           <Grid.Row centered>
-            {errors.submit ? <Message error content="hi" /> : "ho"}
             <Grid.Column textAlign="center" width={8}>
               <Form.Field
                 label={{ children: "Nombre de Usuario", style: { marginBottom: "10px" } }}

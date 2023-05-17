@@ -4,6 +4,7 @@ import { Grid, Menu } from "semantic-ui-react";
 
 export default function Reports() {
   const [activeItem, setActiveItem] = useState("dashboard");
+
   function handleItemClick(e, { name }) {
     setActiveItem(name);
   }

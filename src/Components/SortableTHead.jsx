@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Icon, Table } from "semantic-ui-react";
+import React, { useState } from "react";
+import { Table } from "semantic-ui-react";
 
 export default function SortableTHead({ columns, handleSorting }) {
   const [orderBy, setOrderBy] = useState("");

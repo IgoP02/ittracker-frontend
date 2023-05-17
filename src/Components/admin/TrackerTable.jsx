@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Table, Pagination, Grid, Select } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
-import { axiosReports } from "../utils/axiosClients";
+import { AxiosAdmin } from "../utils/axiosClients";
 
 export default function TrackerTable() {
   const [pagination, setPagination] = useState({ page: 1, perpage: 30 });
   const [tableData, setTableData] = useState();
 
   const getData = async () => {
-    const { data } = await axiosReports.get(`${pagination.page}/${pagination.perpage}`);
+    const { data } = await AxiosAdmin.get(`${pagination.page}/${pagination.perpage}`);
     console.log(typeof data.data);
     console.log(data);
 

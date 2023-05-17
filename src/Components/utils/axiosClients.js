@@ -3,10 +3,11 @@ import { getToken } from "./manageLogin";
 
 const csrfAxios = axios.create({baseURL:"http://api.ittracker.test/sanctum/csrf-cookie"})
 
-const axiosReports = axios.create({
+const AxiosAdmin = axios.create({
     baseURL:"http://api.ittracker.test/api/reports",
     headers:{
-        Authorization : `Bearer ${getToken()}`
+        Authorization : `Bearer ${getToken()}`,
+        Accept: "Application/json"
     }
 });
 
@@ -15,4 +16,4 @@ const axiosApi = axios.create({
 
 })
 
-export {axiosReports,axiosApi,csrfAxios}
+export {AxiosAdmin,axiosApi,csrfAxios}

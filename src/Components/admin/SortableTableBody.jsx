@@ -1,6 +1,6 @@
 import { Table } from "semantic-ui-react";
 import { priorityStyles } from "../tablestyles";
-import { axiosReports } from "../utils/axiosClients";
+import { AxiosAdmin } from "../utils/axiosClients";
 import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
@@ -11,7 +11,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
     S: "Solucionado",
   };
   function handleStatusChange(status, i, id) {
-    axiosReports.get(`/update/${id}/${status}`);
+    AxiosAdmin.get(`/update/${id}/${status}`);
     setTableData([
       ...tableData.map((row, j) => {
         if (i === j) {

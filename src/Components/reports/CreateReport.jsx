@@ -1,37 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Form as RouterForm } from "react-router-dom";
-import { Divider, Form, Grid, Header, Select } from "semantic-ui-react";
-import { axiosReports, csrfAxios } from "../utils/axiosClients";
+import { Divider, Form, Grid, Header, Loader, Select } from "semantic-ui-react";
+import { csrfAxios } from "../utils/axiosClients";
+import CreateReportForm from "./CreateReportForm";
 import fetchField from "./fetchField";
+
 export default function CreateReport() {
   const [isLoading, setisLoading] = useState(true);
   const [departments, setDepartments] = useState();
   const [issueTypes, setIssueTypes] = useState();
   const [issues, setIssues] = useState();
-  const [selectedType, setSelectedType] = useState(1);
-  const [filteredIssues, setFilteredIssues] = useState("");
+  const [error, setError] = useState();
 
   csrfAxios();
   //PLACEHOLDERS
-  function filterIssues(issues, type_id) {
-    return issues.filter((issue) => issue.type_id === type_id);
-  }
-  const getFields = async () => {
-    const deps = await fetchField("departments");
-    const types = await fetchField("issue_types");
-    const issues = await fetchField("issues");
 
-    setDepartments(deps);
-    setIssueTypes(types);
-    setIssues(issues);
+  const getFields = async () => {
+    try {
+      const deps = await fetchField("departments");
+      const types = await fetchField("issue_types");
+      const issues = await fetchField("issues");
+
+      setDepartments(deps);
+      setIssueTypes(types);
+      setIssues(issues);
+      /*  setDepartments(deps);
+      setIssueTypes(types);
+      setIssues(issues);
+      */
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.status);
+      }
+      setError(error.message);
+    }
   };
 
-  /* async function getField(field) {
-    const response = await axiosReports(`/field/${field}`);
-    const data = response.data;
-    console.log("mapa", data);
-    return data;
-  } */
   useEffect(() => {
     if (!departments && !issues && !issueTypes) {
       getFields();
@@ -40,84 +43,38 @@ export default function CreateReport() {
       console.log("deps", departments);
       console.log("types", issueTypes);
       console.log("iss", issues);
-      console.log();
     }
   }, [departments, issueTypes, issues]);
-  useEffect(() => {
-    if (issues) {
-      setFilteredIssues([...filteredIssues, filterIssues(issues, selectedType.id)]);
-      console.log(filteredIssues);
-    }
-  }, [selectedType]);
 
-  function onChangeType(e, { value }) {
-    setSelectedType({ ...selectedType, value });
-  }
-
-  if (isLoading) {
-    return <div>"Loading"</div>;
-  }
   return (
     <>
-      <Header icon="add" content="Crear Reporte" />
+      <Header
+        icon={{ name: "add", size: "massive" }}
+        content="Crear Reporte"
+        style={{ marginTop: "4.5em", marginBottom: "1em" }}
+      />
       <Divider clearing />
-      <Form size="large" as={RouterForm}>
-        <Grid stackable style={{ marginTop: "1em" }}>
-          <Grid.Row>
-            <Grid.Column width={8}>
-              <Form.Field>
-                <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
-                  Departamento
-                </label>
-
-                <Select placeholder="Pick a Department" options={departments} />
-              </Form.Field>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row columns={2}>
-            <Grid.Column>
-              <Form.Field id={"issue_type"}>
-                <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
-                  Tipo de Avería
-                </label>
-
-                <Select
-                  placeholder="¿Qué tipo de problema presenta?"
-                  options={issueTypes}
-                  onChange={onChangeType}
-                />
-              </Form.Field>
-            </Grid.Column>
-            <Grid.Column>
-              <Form.Field>
-                <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
-                  Problema Observado
-                </label>
-
-                <Select placeholder="What's the problem?" options={issues} />
-              </Form.Field>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Form.Field>
-                <label style={{ fontSize: "15px", fontWeight: "bold" }}>Descripción</label>
-                <Form.TextArea rows={6} width={"12"} />
-              </Form.Field>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <ul>
-                {issues.map((issue) => (
-                  <li>{issue.name}</li>
-                ))}
-              </ul>
-              <Form.Button color="red" content="Enviar" />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Form>
+      {isLoading ? (
+        <Loader active indeterminate={error ? true : null}>
+          {error ? (
+            error > 400 ? (
+              "Algo salió mal, intente recargar la página"
+            ) : error.includes("Network") ? (
+              "El servidor no se encuentra disponible, intente más tarde"
+            ) : null
+          ) : (
+            <p>Cargando</p>
+          )}
+        </Loader>
+      ) : (
+        <CreateReportForm
+          departments={departments}
+          issueTypes={issueTypes}
+          issues={issues}
+          setError={setError}
+          error={error}
+        />
+      )}
     </>
   );
 }

@@ -1,12 +1,17 @@
-import { useContext } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginContext } from "../../main";
 
-export default function ProtectedRoute({ children }) {
-  const [loggedIn] = useContext(LoginContext);
+export default function ProtectedRoute({ loggedIn, children }) {
   const navigate = useNavigate();
-  if (!loggedIn) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (!loggedIn) {
+      navigate("/");
+    }
+  }, []);
   return children;
+
+  /* if (!loggedIn) {
+    return <Navigate to="/" replace />;
+  }
+  return children; */
 }

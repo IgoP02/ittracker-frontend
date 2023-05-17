@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Grid } from "semantic-ui-react";
 import HomeOptions from "./home/HomeOptions";
 import MessageFeed from "./home/MessageFeed";

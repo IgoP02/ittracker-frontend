@@ -11,7 +11,7 @@ export default function StatusSelector({
 }) {
   useEffect(() => {
     console.log(currentStatus.at(0));
-  });
+  }, []);
 
   const [status, setStatus] = useState({ selected: currentStatus });
 
