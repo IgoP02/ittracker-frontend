@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Button, Divider, Form, Grid, Header, Icon, Segment } from "semantic-ui-react";
-import { Form as RouterForm, Link } from "react-router-dom";
+import { Form as RouterForm, Link, Navigate, useNavigate } from "react-router-dom";
+import { axiosApi } from "../utils/axiosClients";
 
 export default function HomeOptions() {
-  const [data, setData] = useState("");
+  const [id, setId] = useState();
+  const [error, setError] = useState();
+  const [submitAttempt, setSubmitAttempt] = useState(false);
+  const navigate = useNavigate();
   function handleChange(e) {
-    setData(e.target.value);
+    setId(e.target.value);
   }
-  function handleClick() {
-    console.log(data);
+  async function handleSubmit(e, d) {
+    setSubmitAttempt(true);
+    if (!id) {
+      setError("empty");
+    }
   }
   return (
     <>
@@ -35,7 +42,7 @@ export default function HomeOptions() {
           </Divider>
           <Grid.Row centered>
             <Grid.Column textAlign="center">
-              <Form onSubmit={handleClick} size="large" as={RouterForm}>
+              <Form onSubmit={handleSubmit} size="large" as={RouterForm}>
                 <Header icon>
                   <Icon name="search" />
                   Consultar Reporte
