@@ -1,20 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Grid, Icon, Message } from "semantic-ui-react";
+import { Grid, Icon, Loader, Message } from "semantic-ui-react";
+import { CustomPara } from "../general_components/CustomPara";
 
 export default function SuccessPage() {
   const { state } = useLocation();
+  const [isLoading, setIsloading] = useState(true);
   const navigate = useNavigate();
   console.log(state);
   const { id } = useParams();
   useEffect(() => {
     if (state !== "fromapp") {
       return navigate("/");
+    } else {
+      setIsloading(false);
     }
   }, []);
-  const Txt = ({ size, text }) => {
-    return <p style={{ fontSize: `${size}em` }}>{text}</p>;
-  };
+
+  if (isLoading) {
+    return <Loader active>Espere...</Loader>;
+  }
+
   return (
     <Grid centered>
       <Grid.Row centered>
@@ -24,9 +30,9 @@ export default function SuccessPage() {
               <Icon name="checkmark" color="green" size="huge" />
             </Message.Header>
             <Message.Content>
-              <Txt size={2.5} text="Reporte creado exitosamente" />
-              <Txt size={2} text="Su código es:" />
-              <Txt size={2.5} text={id} />
+              <CustomPara size={2.5} text="Reporte creado exitosamente" />
+              <CustomPara size={2} text="Su código es:" />
+              <CustomPara size={2.5} text={id} />
             </Message.Content>
           </Message>
         </Grid.Column>

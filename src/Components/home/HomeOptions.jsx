@@ -1,20 +1,24 @@
 import { useState } from "react";
-import { Button, Divider, Form, Grid, Header, Icon, Segment } from "semantic-ui-react";
+import { Button, Divider, Form, Grid, Header, Icon, Input, Segment } from "semantic-ui-react";
 import { Form as RouterForm, Link, Navigate, useNavigate } from "react-router-dom";
 import { axiosApi } from "../utils/axiosClients";
 
 export default function HomeOptions() {
   const [id, setId] = useState();
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
   const [submitAttempt, setSubmitAttempt] = useState(false);
   const navigate = useNavigate();
-  function handleChange(e) {
+  function handleChange(e, d) {
+    console.log(e.target.value);
     setId(e.target.value);
+    setError(false);
   }
   async function handleSubmit(e, d) {
     setSubmitAttempt(true);
-    if (!id) {
+    if (id == "" || id == null) {
       setError("empty");
+    } else {
+      navigate(`/reports/get/${id}`);
     }
   }
   return (
@@ -43,16 +47,21 @@ export default function HomeOptions() {
           <Grid.Row centered>
             <Grid.Column textAlign="center">
               <Form onSubmit={handleSubmit} size="large" as={RouterForm}>
-                <Header icon>
-                  <Icon name="search" />
-                  Consultar Reporte
-                </Header>
-                <Form.Input
-                  action={{
-                    icon: "search",
-                    color: "red",
-                  }}
-                  onChange={handleChange}></Form.Input>
+                <Form.Field
+                  error={error == "empty" && submitAttempt ? true : false}
+                  id="searchbyid">
+                  <Header icon>
+                    <Icon name="search" />
+                    Consultar Reporte
+                  </Header>
+                  <Input
+                    action={{
+                      icon: "search",
+                      color: "red",
+                    }}
+                    onChange={handleChange}
+                  />
+                </Form.Field>
               </Form>
             </Grid.Column>
           </Grid.Row>

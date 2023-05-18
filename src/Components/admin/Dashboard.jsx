@@ -39,7 +39,7 @@ export default function Dashboard() {
             <Segment size="tiny" style={{ height: "300px", width: "300px" }} textAlign="center">
               <TypeChart labelStyle={labelStyle} />
             </Segment>
-            <Segment style={{ height: "300px", width: "450px" }} textAlign="center">
+            <Segment style={{ height: "300px", width: "500px" }} textAlign="center">
               <DepChart labelStyle={labelStyle} />
             </Segment>
           </Segment.Group>

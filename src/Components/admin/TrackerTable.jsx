@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination, Grid, Select } from "semantic-ui-react";
+import { Table, Pagination, Grid, Select, Loader } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
@@ -7,6 +7,7 @@ import { AxiosAdmin } from "../utils/axiosClients";
 export default function TrackerTable() {
   const [pagination, setPagination] = useState({ page: 1, perpage: 30 });
   const [tableData, setTableData] = useState();
+  const [isLoading, setisLoading] = useState(true);
 
   const getData = async () => {
     const { data } = await AxiosAdmin.get(`${pagination.page}/${pagination.perpage}`);
@@ -15,6 +16,13 @@ export default function TrackerTable() {
 
     setTableData(data.data);
   };
+  useEffect(() => {
+    if (!tableData) {
+      getData();
+    } else if (tableData) {
+      setisLoading(false);
+    }
+  }, [tableData]);
 
   useEffect(() => {
     getData();
@@ -57,7 +65,9 @@ export default function TrackerTable() {
     }
     return options;
   };
-
+  if (isLoading) {
+    return <Loader active>loading</Loader>;
+  }
   return (
     <Grid>
       <Grid.Row style={{ padding: "0px" }}>

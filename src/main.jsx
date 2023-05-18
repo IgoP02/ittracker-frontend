@@ -18,6 +18,7 @@ import "./assets/App.css";
 import Tracker from "./Components/admin/Tracker";
 import { isLogged } from "./Components/utils/manageLogin";
 import SuccessPage from "./Components/reports/SuccessPage";
+import ShowReport from "./Components/reports/ShowReport";
 export const LoginContext = createContext();
 function Main() {
   const [loggedIn, setLoggedIn] = useState(isLogged(false));
@@ -39,7 +40,7 @@ function Main() {
         </Route>
         <Route path="reports">
           <Route path="create" element={<CreateReport />} />
-          <Route path="get/:id" element={<SuccessPage />} />
+          <Route path="get/:id" element={<ShowReport />} />
           <Route path="success/:id" element={<SuccessPage />} />
         </Route>
       </Route>

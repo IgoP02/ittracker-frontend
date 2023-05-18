@@ -4,12 +4,6 @@ import { AxiosAdmin } from "../utils/axiosClients";
 import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
-  const statuses = {
-    A: "Asignado",
-    C: "Cerrado",
-    P: "Pendiente",
-    S: "Solucionado",
-  };
   function handleStatusChange(status, i, id) {
     AxiosAdmin.get(`/update/${id}/${status}`);
     setTableData([
@@ -35,7 +29,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
               {column.key === "status" ? (
                 <StatusSelector
                   key={`selector_${row.id}`}
-                  currentStatus={statuses[row.status]}
+                  currentStatus={row.status ? row.status : "none"}
                   currentRow={index}
                   reportId={row.id}
                   handleStatusChange={handleStatusChange}

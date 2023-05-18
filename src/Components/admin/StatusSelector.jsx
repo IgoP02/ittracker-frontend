@@ -3,17 +3,23 @@ import { Dropdown, Select } from "semantic-ui-react";
 import { statusStyles } from "../tablestyles";
 import capitalize from "../utils/capitalize";
 import refStateHook from "../utils/refStateHook";
+
 export default function StatusSelector({
   currentStatus,
   handleStatusChange,
   currentRow,
   reportId,
 }) {
-  useEffect(() => {
-    console.log(currentStatus.at(0));
-  }, []);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState({ selected: currentStatus });
+  useEffect(() => {
+    if (!status) {
+      setIsLoading(true);
+    } else if (status) {
+      setIsLoading(false);
+    }
+    console.log(currentStatus);
+  }, [status]);
 
   // const [status, setStatus ] = refStateHook({selected:currentStatus});
   const options = [
@@ -22,7 +28,7 @@ export default function StatusSelector({
       text: "Pendiente",
       value: "P",
       get style() {
-        return statusStyles[this.text];
+        return statusStyles[this.value];
       },
     },
     {
@@ -30,7 +36,7 @@ export default function StatusSelector({
       text: "Asignado",
       value: "A",
       get style() {
-        return statusStyles[this.text];
+        return statusStyles[this.value];
       },
     },
     {
@@ -38,7 +44,7 @@ export default function StatusSelector({
       text: "Solucionado",
       value: "S",
       get style() {
-        return statusStyles[this.text];
+        return statusStyles[this.value];
       },
     },
     {
@@ -46,7 +52,7 @@ export default function StatusSelector({
       text: "Cerrado",
       value: "C",
       get style() {
-        return statusStyles[this.text];
+        return statusStyles[this.value];
       },
     },
   ];
@@ -55,12 +61,16 @@ export default function StatusSelector({
     setStatus({ ...status, selected: capitalize(d.value) });
     handleStatusChange(capitalize(d.value), currentRow, reportId);
     //console.log("selected", selected);
+    if (isLoading) {
+      return <p>is loading</p>;
+    }
   }
   return (
     <Select
       placeholder={currentStatus}
       value={status.selected}
       options={options}
+      direction="right"
       style={{ ...statusStyles[currentStatus.at(0)], borderRadius: "0px" }}
       onChange={handleChange}
     />
