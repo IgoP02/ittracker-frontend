@@ -42,6 +42,7 @@ export default function TrackerTable() {
     { label: "Status", key: "status", sortable: true },
     { label: "Priority", key: "priority", sortable: true },
     { label: "Date", key: "date", sortable: true },
+    { label: "Assignee", key: "assignee", sortable: true },
   ];
   function handlePageCount(e, d) {
     setPerPage(d.value);
