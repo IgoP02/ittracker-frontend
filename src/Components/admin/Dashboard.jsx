@@ -14,9 +14,8 @@ import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 
+ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
 export default function Dashboard() {
-  ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
-
   const labelStyle = {
     fontSize: "15px",
     backgroundColor: "rgb(215,215,215,0.2)",
@@ -30,9 +29,9 @@ export default function Dashboard() {
           <ReportStats />
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row columns={1} style={rowPadding}>
+      <Grid.Row columns={1} style={{ ...rowPadding }}>
         <Grid.Row>
-          <ChartSelector />
+          <ChartSelector style={{ marginBottom: "2em" }} />
         </Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>

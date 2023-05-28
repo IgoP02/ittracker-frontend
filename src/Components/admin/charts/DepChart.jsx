@@ -1,7 +1,7 @@
-import { Chart } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 // import { Chart as ChartJS } from "chart.js/auto";
-import { Label } from "semantic-ui-react";
+import { Label, Loader } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
 
 export default function DepChart({ labelStyle }) {
@@ -16,14 +16,25 @@ export default function DepChart({ labelStyle }) {
       getData();
       console.log(chartData);
     }
-    if (chartData) {
+    if (chartData != null && chartData != "Network Error") {
       console.log(chartData);
       setIsLoading(false);
     }
   }, [field, chartData]);
 
-  if (!chartData) {
-    return <p>Loading</p>;
+  if (isLoading == true) {
+    return (
+      <Loader
+        active
+        content={
+          typeof chartData == "number" || chartData == "Network Error"
+            ? "Algo ha salido mal"
+            : "Cargando"
+        }
+        indeterminate={chartData == "Network Error" ? true : false}
+        style={{ marginTop: "2em" }}
+      />
+    );
   }
   const data = {
     datasets: [
@@ -65,7 +76,7 @@ export default function DepChart({ labelStyle }) {
         content="Reportes Activos por Departamento"
         as="h5"
       />
-      <Chart options={options} type="bar" data={data} />
+      <Bar options={options} data={data} />
     </>
   );
 }

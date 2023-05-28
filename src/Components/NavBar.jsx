@@ -11,10 +11,12 @@ function NavBar() {
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("");
+
   function handleItemClick(e, { name }) {
     setActiveItem(name);
     console.log(name);
   }
+  
   function handleLogOut() {
     setLoggedIn(false);
     removeLogged();

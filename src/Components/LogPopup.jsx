@@ -41,12 +41,15 @@ export default function LogPopup({ isOpen, setIsOpen }) {
       console.log(data.access_token);
       setSubmitAttempt(false);
       await setToken(data.access_token);
+      setFormData({ username: "", password: "" });
       setLoggedIn(true);
       setLogged();
       setIsOpen(false);
     } catch (error) {
       setErrors({ ...errors, submit: error.response.status });
       setSubmitAttempt(true);
+      setFormData({ username: "", password: "" });
+
       console.log(error.response.status);
     }
   }

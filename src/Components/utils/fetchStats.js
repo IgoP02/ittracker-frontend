@@ -12,8 +12,10 @@ export default async function fetchStats(field) {
   } catch (error) {
     if (error.response) {
       console.log(error.response);
+      return error.response.status;
     } else if (error.message) {
       console.log(error.message);
+      return error.message;
     }
   }
 }

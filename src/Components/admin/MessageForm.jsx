@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Header, Input, Label, TextArea } from "semantic-ui-react";
+import { Button, Form, Label, TextArea } from "semantic-ui-react";
 
 export default function MessageForm({ labelStyle }) {
   return (
@@ -16,6 +16,7 @@ export default function MessageForm({ labelStyle }) {
           <label style={labelStyle}>Mensaje</label>
           <TextArea rows={6} />
         </Form.Field>
+        <Button type="submit" />
       </Form>
     </>
   );

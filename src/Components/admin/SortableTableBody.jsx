@@ -5,7 +5,7 @@ import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
   function handleStatusChange(status, i, id) {
-    AxiosAdmin.get(`/update/${id}/${status}`);
+    AxiosAdmin.patch(`/update/${id}`, null, { params: { status: status } });
     setTableData([
       ...tableData.map((row, j) => {
         if (i === j) {

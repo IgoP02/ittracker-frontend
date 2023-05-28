@@ -1,32 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination, Grid, Select, Loader } from "semantic-ui-react";
+import { Table, Pagination, Grid, Select, Loader, Segment } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
 
 export default function TrackerTable() {
-  const [pagination, setPagination] = useState({ page: 1, perpage: 30 });
+  const [perPage, setPerPage] = useState(10);
   const [tableData, setTableData] = useState();
   const [isLoading, setisLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState();
 
-  const getData = async () => {
-    const { data } = await AxiosAdmin.get(`${pagination.page}/${pagination.perpage}`);
+  const getData = async (currentPage, perPage) => {
+    const { data } = await AxiosAdmin.get("", { params: { page: currentPage, perpage: perPage } });
+
     console.log(typeof data.data);
     console.log(data);
 
     setTableData(data.data);
+    setLastPage(data.last_page);
   };
   useEffect(() => {
     if (!tableData) {
-      getData();
+      getData(currentPage, perPage);
     } else if (tableData) {
       setisLoading(false);
     }
   }, [tableData]);
 
   useEffect(() => {
-    getData();
-  }, [pagination]);
+    console.log(currentPage);
+    getData(currentPage, perPage);
+  }, [currentPage, perPage]);
 
   const columns = [
     { label: "ID", key: "id", sortable: true },
@@ -39,7 +44,11 @@ export default function TrackerTable() {
     { label: "Date", key: "date", sortable: true },
   ];
   function handlePageCount(e, d) {
-    setPagination({ ...pagination, perpage: d.value });
+    setPerPage(d.value);
+  }
+  function handlePageChange(e, d) {
+    console.log(d.activePage);
+    setCurrentPage(d.activePage);
   }
 
   //End of the test logic
@@ -56,17 +65,17 @@ export default function TrackerTable() {
       setTableData(sortedData);
     }
   }
-  const displayRowOptions = (count = 1) => {
-    const options = [];
-    let rownum = 0;
-    for (let i = 1; i < count + 1; i++) {
-      rownum = i * 10;
-      options.push({ key: `show${rownum}rows`, value: rownum, text: rownum });
-    }
-    return options;
-  };
+
   if (isLoading) {
-    return <Loader active>loading</Loader>;
+    return (
+      <Grid centered style={{ marginLeft: "40em", marginTop: "10em" }}>
+        <Grid.Row textAlign="center">
+          <Grid.Column textAlign="center">
+            <Loader active>Cargando</Loader>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
   }
   return (
     <Grid>
@@ -93,9 +102,23 @@ export default function TrackerTable() {
       </Grid.Row>
       <Grid.Row centered textAlign="center" style={{ padding: "0px" }}>
         <Grid.Column textAlign="center">
-          <Pagination totalPages={10} activePage={1} />
+          <Pagination
+            totalPages={lastPage}
+            activePage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </Grid.Column>
       </Grid.Row>
     </Grid>
   );
 }
+
+const displayRowOptions = (count = 1) => {
+  const options = [];
+  let rownum = 0;
+  for (let i = 1; i < count + 1; i++) {
+    rownum = i * 10;
+    options.push({ key: `show${rownum}rows`, value: rownum, text: rownum });
+  }
+  return options;
+};
