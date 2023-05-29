@@ -4,13 +4,15 @@ import { AxiosAdmin } from "../utils/axiosClients";
 import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
-  function handleStatusChange(status, i, id) {
-    AxiosAdmin.patch(`/update/${id}`, null, { params: { status: status } });
+  async function handleStatusChange(status, i, id) {
+    const { data } = await AxiosAdmin.patch(`/update/${id}`, null, { params: { status: status } });
+    console.log("RESPONSEEEEE", data);
     setTableData([
       ...tableData.map((row, j) => {
         if (i === j) {
           // console.log("UPDATED ", status);
           row.status = status;
+          row.status == "A" ? (row.assignee = data.assignee) : null;
           return row;
         }
         return row;

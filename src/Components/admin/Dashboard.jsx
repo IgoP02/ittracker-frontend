@@ -13,6 +13,7 @@ import TypeChart from "./charts/TypeChart";
 import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
+import RegisterForm from "./RegisterForm";
 
 ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
 export default function Dashboard() {
@@ -31,7 +32,7 @@ export default function Dashboard() {
       </Grid.Row>
       <Grid.Row columns={1} style={{ ...rowPadding }}>
         <Grid.Row>
-          <ChartSelector style={{ marginBottom: "2em" }} />
+          <ChartSelector />
         </Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>
@@ -45,10 +46,22 @@ export default function Dashboard() {
         </Grid.Column>
       </Grid.Row>
       <Grid.Row style={rowPadding}>
-        <Grid.Column width={14}>
+        <Grid.Column width={10}>
           <Segment>
             <MessageForm labelStyle={labelStyle} />
           </Segment>
+        </Grid.Column>
+        <Grid.Column width={6}>
+          <Grid.Row>
+            <Segment>
+              <p>Placeholder</p>
+            </Segment>
+          </Grid.Row>
+          <Grid.Row>
+            <Segment>
+              <RegisterForm />
+            </Segment>
+          </Grid.Row>
         </Grid.Column>
       </Grid.Row>
     </Grid>

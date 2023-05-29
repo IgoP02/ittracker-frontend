@@ -49,14 +49,15 @@ export default function ReportStats({ data }) {
   }
   if (isLoading || !items) {
     return (
-      <Loader
-        active
-        content={
-          typeof stats == "number" || stats == "Network Error" ? "Algo ha salido mal" : "Cargando"
-        }
-        indeterminate={stats == "Network Error" ? true : false}
-        style={{ marginTop: "2em", marginBottom: "5em" }}
-      />
+      <div style={{ marginBottom: "3em" }}>
+        <Loader
+          active
+          content={
+            typeof stats == "number" || stats == "Network Error" ? "Algo ha salido mal" : "Cargando"
+          }
+          indeterminate={stats == "Network Error" ? true : false}
+        />
+      </div>
     );
   }
   return (
