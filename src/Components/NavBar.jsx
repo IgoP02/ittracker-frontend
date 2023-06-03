@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Image, Menu } from "semantic-ui-react";
 import { LoginContext } from "../main";
 import LogPopup from "./LogPopup";
-import { deleteToken, removeLogged } from "./utils/manageLogin";
+import { deleteToken, getToken, removeLogged, removeUserName } from "./utils/manageLogin";
+import axios from "axios";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -16,9 +17,16 @@ function NavBar() {
     setActiveItem(name);
     console.log(name);
   }
-  
+
   function handleLogOut() {
+    axios.get("http://api.ittracker.test/api/logout", {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        Accept: "Application/json",
+      },
+    });
     setLoggedIn(false);
+    removeUserName();
     removeLogged();
     deleteToken();
     navigate("/", true);

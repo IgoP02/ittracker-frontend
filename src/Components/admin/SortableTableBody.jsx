@@ -1,12 +1,16 @@
 import { Table } from "semantic-ui-react";
 import { priorityStyles } from "../tablestyles";
 import { AxiosAdmin } from "../utils/axiosClients";
+import { getToken } from "../utils/manageLogin";
 import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
   async function handleStatusChange(status, i, id) {
-    const { data } = await AxiosAdmin.patch(`/update/${id}`, null, { params: { status: status } });
-    console.log("RESPONSEEEEE", data);
+    const { data } = await AxiosAdmin.patch(`/update/${id}`, undefined, {
+      params: {
+        status: status,
+      },
+    });
     setTableData([
       ...tableData.map((row, j) => {
         if (i === j) {

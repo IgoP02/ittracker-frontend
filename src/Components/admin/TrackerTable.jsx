@@ -15,7 +15,6 @@ export default function TrackerTable() {
     const { data } = await AxiosAdmin.get("", { params: { page: currentPage, perpage: perPage } });
 
     console.log(typeof data.data);
-    console.log(data);
 
     setTableData(data.data);
     setLastPage(data.last_page);

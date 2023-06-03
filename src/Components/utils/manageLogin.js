@@ -5,41 +5,57 @@ import Cookies from "js-cookie";
  * @param token
  */
 function setToken(token) {
-    
-    Cookies.set("auth_token",token);
-    
+  Cookies.set("auth_token", token);
 }
-/** 
-* Get token from cookies
-* @returns {string} retreived token
-*/
+/**
+ * Get token from cookies
+ * @returns {string} retreived token
+ */
 function getToken() {
-    return Cookies.get("auth_token");
+  return Cookies.get("auth_token");
 }
 /**
  * Deletes currently set auth token
  */
 function deleteToken() {
-    Cookies.remove("auth_token")
+  Cookies.remove("auth_token");
 }
 /**
  * Sets logged cookie
  */
-function setLogged(){
-    Cookies.set("logged",true);
+function setLogged() {
+  Cookies.set("logged", true);
 }
 /**
  * Removes logged cookie
  */
 function removeLogged() {
-    Cookies.remove("logged");
+  Cookies.remove("logged");
 }
 /**
  * Checks if logged cookie if set
  * @returns {boolean}
  */
 function isLogged() {
-    return Cookies.get("logged") ? true : false;
+  return Cookies.get("logged") ? true : false;
 }
-
-export {setToken,getToken,deleteToken, setLogged, removeLogged, isLogged};
+function setUserName(userName) {
+  localStorage.setItem("user_name", userName);
+}
+function getUserName() {
+  return localStorage.getItem("user_name");
+}
+function removeUserName() {
+  return localStorage.removeItem("user_name");
+}
+export {
+  setToken,
+  getToken,
+  deleteToken,
+  setLogged,
+  removeLogged,
+  isLogged,
+  getUserName,
+  setUserName,
+  removeUserName,
+};
