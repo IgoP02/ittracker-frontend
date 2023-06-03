@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import { Button, Form, Grid, Header, Icon, Input, Message, Modal } from "semantic-ui-react";
 import { Form as routerForm } from "react-router-dom";
 import { LoginContext } from "../main";
-import { axiosApi, csrfAxios } from "./utils/axiosClients";
-import { setToken, setLogged } from "./utils/manageLogin";
+import { AxiosAdmin, axiosApi, csrfAxios } from "./utils/axiosClients";
+import { setToken, setLogged, setUsername as setUserName, getToken } from "./utils/manageLogin";
 
 export default function LogPopup({ isOpen, setIsOpen }) {
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
@@ -38,10 +38,12 @@ export default function LogPopup({ isOpen, setIsOpen }) {
           },
         }
       );
-      console.log(data.access_token);
+      console.log(data);
       setSubmitAttempt(false);
-      await setToken(data.access_token);
+      AxiosAdmin.defaults.headers.Authorization = `Bearer ${data.access_token}`;
+      setToken(data.access_token);
       setFormData({ username: "", password: "" });
+      setUserName(data.username);
       setLoggedIn(true);
       setLogged();
       setIsOpen(false);

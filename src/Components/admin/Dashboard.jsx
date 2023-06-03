@@ -14,9 +14,12 @@ import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 import RegisterForm from "./RegisterForm";
+import { getUserName } from "../utils/manageLogin";
+import { useState } from "react";
 
 ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
 export default function Dashboard() {
+  const [userName, setUserName] = useState(getUserName());
   const labelStyle = {
     fontSize: "15px",
     backgroundColor: "rgb(215,215,215,0.2)",
@@ -58,9 +61,11 @@ export default function Dashboard() {
             </Segment>
           </Grid.Row>
           <Grid.Row>
-            <Segment>
-              <RegisterForm />
-            </Segment>
+            {userName == "admin" ? (
+              <Segment>
+                <RegisterForm />
+              </Segment>
+            ) : null}
           </Grid.Row>
         </Grid.Column>
       </Grid.Row>
