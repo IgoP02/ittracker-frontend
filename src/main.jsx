@@ -19,7 +19,17 @@ import Tracker from "./Components/admin/Tracker";
 import { isLogged } from "./Components/utils/manageLogin";
 import SuccessPage from "./Components/reports/SuccessPage";
 import ShowReport from "./Components/reports/ShowReport";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  Legend,
+  Tooltip,
+} from "chart.js";
 export const LoginContext = createContext();
+ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
 function Main() {
   const [loggedIn, setLoggedIn] = useState(isLogged(false));
   const route = createBrowserRouter(

@@ -1,30 +1,60 @@
-import {
-  Chart as ChartJS,
-  ArcElement,
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  Legend,
-  Tooltip,
-} from "chart.js";
 import { Grid, Segment } from "semantic-ui-react";
-import DepChart from "./charts/DepChart";
-import TypeChart from "./charts/TypeChart";
+import StatsArcChart from "./charts/StatsArcChart";
+import StatsBarChart from "./charts/StatsBarChart";
 import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 import RegisterForm from "./RegisterForm";
 import { getUserName } from "../utils/manageLogin";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LoginContext } from "../../main";
+import LatestMessage from "../LatestMessage";
+import { AxiosAdmin } from "../utils/axiosClients";
 
-ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
 export default function Dashboard() {
+  const [barField, setBarField] = useState("");
+  const [arcField, setArcField] = useState("");
+  const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [userName, setUserName] = useState(getUserName());
+  const [MessageData, setMessageData] = useState();
+
+  const getMessage = async () => {
+    try {
+      const { status, data } = await AxiosAdmin.get("/messages/latest");
+      setMessageData(data);
+    } catch (error) {
+      if (error.response) {
+      } else if (error.message) {
+      }
+    }
+  };
+  const clearMessage = async () => {
+    setMessageData();
+    try {
+      const { status } = await AxiosAdmin.get("/messages/delete");
+    } catch (error) {
+      if (error.response) {
+      } else if (error.message) {
+      }
+    }
+  };
+  useEffect(() => {
+    if (!MessageData) {
+      getMessage();
+    } else {
+      console.log("MessageData", MessageData);
+    }
+  }, [MessageData]);
+
   const labelStyle = {
     fontSize: "15px",
     backgroundColor: "rgb(215,215,215,0.2)",
   };
   const rowPadding = { padding: "0" };
+
+  if (loggedIn == false) {
+    return;
+  }
 
   return (
     <Grid relaxed centered stackable columns="equal">
@@ -35,15 +65,27 @@ export default function Dashboard() {
       </Grid.Row>
       <Grid.Row columns={1} style={{ ...rowPadding }}>
         <Grid.Row>
-          <ChartSelector />
+          <ChartSelector
+            options={[
+              { key: "deps", text: "Departamento", value: "deps", icon: "building" },
+              { key: "assignee", text: "Analista", value: "assignee", icon: "user" },
+            ]}
+            onChange={(e, d) => {
+              console.log(d);
+              console.log(e);
+
+              setBarField({ value: d.value, text: d.text });
+              console.log(barField);
+            }}
+          />
         </Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>
             <Segment size="tiny" style={{ height: "300px", width: "300px" }} textAlign="center">
-              <TypeChart labelStyle={labelStyle} />
+              <StatsBarChart labelStyle={labelStyle} />
             </Segment>
             <Segment style={{ height: "300px", width: "500px" }} textAlign="center">
-              <DepChart labelStyle={labelStyle} />
+              <StatsArcChart labelStyle={labelStyle} />
             </Segment>
           </Segment.Group>
         </Grid.Column>
@@ -51,21 +93,15 @@ export default function Dashboard() {
       <Grid.Row style={rowPadding}>
         <Grid.Column width={10}>
           <Segment>
-            <MessageForm labelStyle={labelStyle} />
+            <MessageForm labelStyle={labelStyle} setLatestMessageData={setMessageData} />
           </Segment>
+          <Grid.Row style={{ marginTop: "1em" }}>
+            {userName == "admin" ? <RegisterForm /> : null}
+          </Grid.Row>
         </Grid.Column>
         <Grid.Column width={6}>
           <Grid.Row>
-            <Segment>
-              <p>Placeholder</p>
-            </Segment>
-          </Grid.Row>
-          <Grid.Row>
-            {userName == "admin" ? (
-              <Segment>
-                <RegisterForm />
-              </Segment>
-            ) : null}
+            <LatestMessage LatestMessageData={MessageData} removeMessage={clearMessage} />
           </Grid.Row>
         </Grid.Column>
       </Grid.Row>

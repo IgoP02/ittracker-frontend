@@ -12,7 +12,9 @@ export default function TrackerTable() {
   const [lastPage, setLastPage] = useState();
 
   const getData = async (currentPage, perPage) => {
-    const { data } = await AxiosAdmin.get("", { params: { page: currentPage, perpage: perPage } });
+    const { data } = await AxiosAdmin.get("/reports", {
+      params: { page: currentPage, perpage: perPage },
+    });
 
     console.log(typeof data.data);
 
@@ -78,7 +80,7 @@ export default function TrackerTable() {
     );
   }
   return (
-    <Grid>
+    <Grid style={{ width: "100%" }}>
       <Grid.Row style={{ padding: "0px" }}>
         <Grid.Row>
           <Select

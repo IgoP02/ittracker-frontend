@@ -6,7 +6,7 @@ import { AxiosAdmin } from "./axiosClients";
  */
 export default async function fetchStats(field) {
   try {
-    const { data } = await AxiosAdmin.get(`/stats/${field}`);
+    const { data } = await AxiosAdmin.get(`/reports/stats/${field}`);
     console.log(data);
     return await data;
   } catch (error) {

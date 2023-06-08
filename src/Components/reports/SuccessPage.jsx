@@ -30,9 +30,15 @@ export default function SuccessPage() {
               <Icon name="checkmark" color="green" size="huge" />
             </Message.Header>
             <Message.Content>
-              <CustomPara size={2.5} text="Reporte creado exitosamente" />
-              <CustomPara size={2} text="Su código es:" />
-              <CustomPara size={2.5} text={id} />
+              <p>
+                <CustomPara size={2.5} text="Reporte creado exitosamente" />
+              </p>
+              <p>
+                <CustomPara size={2} text="Su código es:" />
+              </p>
+              <p>
+                <CustomPara size={2.5} text={id} />
+              </p>
             </Message.Content>
           </Message>
         </Grid.Column>

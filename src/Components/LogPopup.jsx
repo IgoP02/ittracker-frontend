@@ -3,12 +3,17 @@ import { Button, Form, Grid, Header, Icon, Input, Message, Modal } from "semanti
 import { Form as routerForm } from "react-router-dom";
 import { LoginContext } from "../main";
 import { AxiosAdmin, axiosApi, csrfAxios } from "./utils/axiosClients";
-import { setToken, setLogged, setUsername as setUserName, getToken } from "./utils/manageLogin";
+import { setToken, setLogged, setUserName, getToken } from "./utils/manageLogin";
 
 export default function LogPopup({ isOpen, setIsOpen }) {
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [formData, setFormData] = useState({ username: "", password: "" });
-  const [errors, setErrors] = useState({ username: true, password: true, submit: null });
+  const [errors, setErrors] = useState({
+    username: true,
+    password: true,
+    submit: null,
+    name: true,
+  });
   const [submitAttempt, setSubmitAttempt] = useState(false);
 
   async function handleChange(e, d) {

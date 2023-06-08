@@ -6,7 +6,7 @@ import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
   async function handleStatusChange(status, i, id) {
-    const { data } = await AxiosAdmin.patch(`/update/${id}`, undefined, {
+    const { data } = await AxiosAdmin.patch(`/reports/update/${id}`, undefined, {
       params: {
         status: status,
       },

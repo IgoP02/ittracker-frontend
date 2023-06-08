@@ -1,6 +1,6 @@
 import logo from "../assets/invecem_logo.png";
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button, Container, Image, Menu } from "semantic-ui-react";
 import { LoginContext } from "../main";
 import LogPopup from "./LogPopup";
@@ -8,12 +8,18 @@ import { deleteToken, getToken, removeLogged, removeUserName } from "./utils/man
 import axios from "axios";
 
 function NavBar() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState("");
+  const [activeItem, setActiveItem] = useState(
+    location.pathname.split("/")[1] ? location.pathname.split("/")[1] : "home"
+  );
 
   function handleItemClick(e, { name }) {
+    if (loggedIn == false && name == "admin") {
+      return;
+    }
     setActiveItem(name);
     console.log(name);
   }
@@ -53,9 +59,9 @@ function NavBar() {
             Home
           </Menu.Item>
           <Menu.Item
-            name="Admin"
+            name="admin"
             to="admin"
-            active={activeItem === "Admin"}
+            active={activeItem === "admin"}
             as={Link}
             onClick={handleItemClick}>
             Admin

@@ -1,12 +1,6 @@
 import React from "react";
-import { Dropdown, DropdownMenu, Menu } from "semantic-ui-react";
+import { Select } from "semantic-ui-react";
 
-export default function ChartSelector() {
-  return (
-    <Dropdown floating selection fluid text="Reports per...">
-      <Dropdown.Menu>
-        <Dropdown.Item>Hi</Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
-  );
+export default function ChartSelector({ options, onChange }) {
+  return <Select placeholder="Reportes por..." options={options} onChange={onChange}></Select>;
 }

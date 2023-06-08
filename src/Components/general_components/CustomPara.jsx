@@ -9,10 +9,10 @@ import React from "react";
  */
 const CustomPara = ({ size, text, opacity = 1, weight = "normal", color = "20,20,20" }) => {
   return (
-    <p
+    <span
       style={{ fontSize: `${size}em`, color: `rgb(${color},${opacity})`, fontWeight: `${weight}` }}>
       {text}
-    </p>
+    </span>
   );
 };
 

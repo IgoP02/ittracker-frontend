@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
 import { CustomPara } from "../general_components/CustomPara";
 import { axiosApi } from "../utils/axiosClients";
@@ -26,6 +26,7 @@ export default function ShowReport() {
         date: data.date,
         department: data.department,
         issue: data.issue,
+        assignee: data.assignee,
         issue_type: data.type,
         status: data.status,
         description: data.description,
@@ -43,6 +44,7 @@ export default function ShowReport() {
     if (!report) {
       fetchReport();
     } else if (report) {
+      console.log(report);
       setIsLoading(false);
     }
   }, [report]);
@@ -70,17 +72,33 @@ export default function ShowReport() {
               </Header>
               <CustomPara size={1.5} text={report.code} />
             </Segment>
-            <Segment>
-              <Header size="small">
-                <CustomPara size={1.8} text="Estado" opacity={0.79} />
-              </Header>
-              <CustomPara
-                size={1.5}
-                text={report.status !== undefined ? statuses[report.status].name : "loading"}
-                weight="bold"
-                color={report.status ? statuses[report.status].color : "20,20,20"}
-              />
-            </Segment>
+            <Segment.Group horizontal>
+              <Segment>
+                <Header size="small" style={{ paddingBottom: "0.5em" }}>
+                  <CustomPara size={1.8} text="Estado" opacity={0.79} />
+                </Header>
+                <span>
+                  <CustomPara
+                    size={1.5}
+                    text={
+                      report.status !== undefined ? `${statuses[report.status].name} ` : "loading"
+                    }
+                    weight="bold"
+                    color={report.status ? statuses[report.status].color : "20,20,20"}
+                  />
+                </span>
+                {/* <span style={{ fontSize: "1.5em" }}>a {report.assignee}</span> */}
+              </Segment>
+              <Segment>
+                <Header size="tiny" style={{ paddingBottom: "0.5em" }}>
+                  <CustomPara size={1.8} text="Analista" opacity={0.79} />
+                </Header>
+                <CustomPara
+                  size={1.5}
+                  text={`${report.assignee !== undefined ? report.assignee : "loading"}`}
+                />
+              </Segment>
+            </Segment.Group>
             <Segment.Group compact horizontal style={{}}>
               <Segment>
                 <Header size="small">
