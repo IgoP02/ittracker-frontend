@@ -43,6 +43,10 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
     if (d.id == "issue_type") {
       setSelectedType(issueTypes.find((type) => type.id == d.value.id));
     }
+    /* if (d.id == "issue_type" && d.value.id == 6) {
+      setFormData({ ...formData, issue: "Otros" });
+      console.log("Otros");
+    } */
   }
 
   async function handleSubmit(e, d) {

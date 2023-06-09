@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Grid, Input, Label, Segment } from "semantic-ui-react";
+import { Button, Form, Grid, Input, Label, Message, Segment } from "semantic-ui-react";
 import { axiosApi } from "../utils/axiosClients";
 import { getToken } from "../utils/manageLogin";
 
@@ -11,7 +11,7 @@ export default function RegisterForm() {
     password: false,
     name: false,
   });
-  const [result, setResult] = useState("");
+  const [response, setResponse] = useState();
   function handleChange(e, d) {
     setFormData({ ...formData, [d.name]: d.value });
     if (d.value == "") {
@@ -22,12 +22,14 @@ export default function RegisterForm() {
   }
   async function handleSubmit(e, d) {
     try {
-      const { data, statusText } = await axiosApi.post("register", formData, {
+      const { data, statusText, status } = await axiosApi.post("register", formData, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
           Accept: "Application/json",
         },
       });
+      setResponse(status);
+      setFormData();
     } catch (error) {
       console.log(error);
       if (error.response) {
@@ -37,12 +39,12 @@ export default function RegisterForm() {
         console.log(errors);
       }
       if (error.message) {
-        console.log(error.message);
+        setErrors(error.message);
       }
     }
     console.log(formData);
-    console.log(result);
   }
+
   return (
     <Segment>
       <Label attached="top">Registrar Nuevo Analista</Label>
@@ -131,6 +133,18 @@ export default function RegisterForm() {
           <Button content="Registrar" icon="add user" color="red" />
         </Segment>
       </Form>
+      {response ? (
+        response >= 200 && response < 400 && typeof errors == "object" ? (
+          <Message success content="Usuario Registrado Exitosamente" />
+        ) : (
+          false
+        )
+      ) : null}
+      {typeof errors == "string" && errors.includes("Network") ? (
+        <Message error content="Algo ha salido mal" />
+      ) : (
+        false
+      )}
     </Segment>
   );
 }

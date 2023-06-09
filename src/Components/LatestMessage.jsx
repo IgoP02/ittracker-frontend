@@ -13,7 +13,7 @@ import {
 } from "semantic-ui-react";
 
 const messageTypes = { m: "Mantenimiento", o: "Interrupción de Servicios", i: "Información" };
-const messageIcons = { m: "wrench", o: "shutdown", i: "info" };
+const messageIcons = { m: "wrench", o: "shutdown", i: "exclamation" };
 
 export default function LatestMessage({ LatestMessageData, removeMessage }) {
   console.log("from LatestMEssage", LatestMessageData);

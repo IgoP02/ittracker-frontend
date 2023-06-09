@@ -72,7 +72,6 @@ function NavBar() {
               content={loggedIn ? "Log Out" : "Log In"}
               color={loggedIn ? "red" : "blue"}
               style={{ borderRadius: "1px" }}
-              S
               onClick={loggedIn ? handleLogOut : toggleModal}
             />
           </Menu.Item>

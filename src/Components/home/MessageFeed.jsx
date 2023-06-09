@@ -7,7 +7,7 @@ export default function MessageFeed() {
   const [error, setError] = useState();
   const [isLoading, setIsloading] = useState(true);
   const messageTypes = { m: "Mantenimiento", o: "Interrupción de Servicios", i: "Información" };
-  const messageIcons = { m: "wrench", o: "shutdown", i: "info" };
+  const messageIcons = { m: "wrench", o: "shutdown", i: "exclamation" };
   const fetchMessages = async () => {
     try {
       const { data, status } = await axiosApi.get("/messages");
@@ -61,7 +61,7 @@ export default function MessageFeed() {
         content={<p>Anuncios</p>}
         attached="top"
       />
-      <Feed size="large">{msgarr}</Feed>
+      <Feed size="small">{msgarr}</Feed>
     </Segment>
   );
 }

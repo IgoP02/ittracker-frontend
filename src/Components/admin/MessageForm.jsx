@@ -10,7 +10,7 @@ export default function MessageForm({ labelStyle, setLatestMessageData }) {
   const options = [
     { text: "Mantenimiento", value: "m", icon: "wrench", key: "m" },
     { text: "Interrupción de Servicios", value: "o", icon: "shutdown", key: "o" },
-    { text: "Información", value: "i", icon: "info", key: "i" },
+    { text: "Información", value: "i", icon: "exclamation", key: "i" },
   ];
   const handleChange = (e, d) => {
     setformData({ ...formData, [d.name]: d.value });
