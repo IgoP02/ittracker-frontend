@@ -1,4 +1,4 @@
-import { Grid, Segment } from "semantic-ui-react";
+import { Grid, Icon, Segment } from "semantic-ui-react";
 import StatsArcChart from "./charts/StatsArcChart";
 import StatsBarChart from "./charts/StatsBarChart";
 import MessageForm from "./MessageForm";
@@ -18,6 +18,28 @@ export default function Dashboard() {
   const [userName, setUserName] = useState(getUserName());
   const [MessageData, setMessageData] = useState();
 
+  const chartSelectorOptions = [
+    {
+      key: "deps",
+      text: (
+        <span>
+          <Icon name="building" />
+          Departamento
+        </span>
+      ),
+      value: "deps",
+    },
+    {
+      key: "assignee",
+      text: (
+        <span>
+          <Icon name="user" />
+          Analista
+        </span>
+      ),
+      value: "assignee",
+    },
+  ];
   const getMessage = async () => {
     try {
       const { status, data } = await AxiosAdmin.get("/messages/latest");
@@ -66,14 +88,10 @@ export default function Dashboard() {
       <Grid.Row columns={1} style={{ ...rowPadding }}>
         <Grid.Row>
           <ChartSelector
-            options={[
-              { key: "deps", text: "Departamento", value: "deps", icon: "building" },
-              { key: "assignee", text: "Analista", value: "assignee", icon: "user" },
-            ]}
+            options={chartSelectorOptions}
             onChange={(e, d) => {
               console.log(d);
               console.log(e);
-
               setBarField({ value: d.value, text: d.text });
               console.log(barField);
             }}
