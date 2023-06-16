@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form, Label, Message, Select, TextArea } from "semantic-ui-react";
+import { Button, Form, Icon, Label, Message, Select, TextArea } from "semantic-ui-react";
 import { AxiosAdmin } from "../utils/axiosClients";
 
 export default function MessageForm({ labelStyle, setLatestMessageData }) {
@@ -8,9 +8,36 @@ export default function MessageForm({ labelStyle, setLatestMessageData }) {
   const [errors, setErrors] = useState();
 
   const options = [
-    { text: "Mantenimiento", value: "m", icon: "wrench", key: "m" },
-    { text: "Interrupción de Servicios", value: "o", icon: "shutdown", key: "o" },
-    { text: "Información", value: "i", icon: "exclamation", key: "i" },
+    {
+      text: (
+        <span>
+          <Icon name="wrench" />
+          Mantenimiento
+        </span>
+      ),
+      value: "m",
+      key: "m",
+    },
+    {
+      text: (
+        <span>
+          <Icon name="shutdown" />
+          Interrupción de Servicios"
+        </span>
+      ),
+      value: "o",
+      key: "o",
+    },
+    {
+      text: (
+        <span>
+          <Icon name="exclamation" />
+          Información
+        </span>
+      ),
+      value: "i",
+      key: "i",
+    },
   ];
   const handleChange = (e, d) => {
     setformData({ ...formData, [d.name]: d.value });
