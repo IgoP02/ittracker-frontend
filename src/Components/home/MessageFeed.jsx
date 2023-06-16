@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Divider, Feed, Icon, Label, Loader, Message, Segment } from "semantic-ui-react";
+import { Divider, Feed, Icon, Label, Loader, Message, Segment } from "semantic-ui-react";
 import { axiosApi } from "../utils/axiosClients";
 
 export default function MessageFeed() {

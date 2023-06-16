@@ -5,7 +5,11 @@ const messageIcons = { m: "wrench", o: "shutdown", i: "exclamation" };
 
 export default function LatestMessage({ LatestMessageData, removeMessage }) {
   if (!LatestMessageData) {
-    return <Loader content="Cargando" active />;
+    return (
+      <Segment padded clearing textAlign="center">
+        <Loader content="Cargando" active inline />
+      </Segment>
+    );
   }
   return (
     <>
