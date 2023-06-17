@@ -10,6 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
 import { AxiosAdmin } from "../utils/axiosClients";
+import "../utils/getErrorMessage";
 
 export default function Dashboard() {
   const [barField, setBarField] = useState("");
@@ -17,6 +18,7 @@ export default function Dashboard() {
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [userName, setUserName] = useState(getUserName());
   const [MessageData, setMessageData] = useState();
+  const [errors, setErrors] = useState({});
 
   const chartSelectorOptions = [
     {
@@ -46,7 +48,9 @@ export default function Dashboard() {
       setMessageData(data);
     } catch (error) {
       if (error.response) {
+        setErrors({ ...errors, message: getErrorMessages(error.response.status) });
       } else if (error.message) {
+        setErrors({ ...errors, message: getErrorMessages(error.message) });
       }
     }
   };
@@ -56,7 +60,9 @@ export default function Dashboard() {
       const { status } = await AxiosAdmin.get("/messages/delete");
     } catch (error) {
       if (error.response) {
+        setErrors({ ...errors, message: getErrorMessages(error.response.status) });
       } else if (error.message) {
+        setErrors({ ...errors, message: getErrorMessages(error.message) });
       }
     }
   };
@@ -74,6 +80,16 @@ export default function Dashboard() {
   };
   const rowPadding = { padding: "0" };
 
+  const chartSelector = () => {
+    return (
+      <ChartSelector
+        options={chartSelectorOptions}
+        onChange={(e, d) => {
+          setBarField({ value: d.value, text: d.text });
+        }}
+      />
+    );
+  };
   if (loggedIn == false) {
     return;
   }
@@ -86,17 +102,7 @@ export default function Dashboard() {
         </Grid.Column>
       </Grid.Row>
       <Grid.Row columns={1} style={{ ...rowPadding }}>
-        <Grid.Row>
-          <ChartSelector
-            options={chartSelectorOptions}
-            onChange={(e, d) => {
-              console.log(d);
-              console.log(e);
-              setBarField({ value: d.value, text: d.text });
-              console.log(barField);
-            }}
-          />
-        </Grid.Row>
+        <Grid.Row></Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>
             <Segment size="tiny" style={{ height: "300px", width: "300px" }} textAlign="center">
