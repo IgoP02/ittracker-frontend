@@ -48,7 +48,7 @@ function NavBar() {
         <Container>
           <Menu.Item header>
             <Image size="mini" src={logo} />
-            ITTracker
+            <b>ITTracker</b>
           </Menu.Item>
           <Menu.Item
             name="home"
@@ -56,7 +56,7 @@ function NavBar() {
             active={activeItem === "home"}
             as={Link}
             onClick={handleItemClick}>
-            Home
+            Inicio
           </Menu.Item>
           <Menu.Item
             name="admin"
@@ -64,12 +64,12 @@ function NavBar() {
             active={activeItem === "admin"}
             as={Link}
             onClick={handleItemClick}>
-            Admin
+            Administración
           </Menu.Item>
           <Menu.Item name="logItem" style={{ marginRight: "10px" }} position="right">
             <Button
               name="logItem"
-              content={loggedIn ? "Log Out" : "Log In"}
+              content={loggedIn ? "Cerrar Sesión" : "Iniciar Sesión"}
               color={loggedIn ? "red" : "blue"}
               style={{ borderRadius: "1px" }}
               onClick={loggedIn ? handleLogOut : toggleModal}

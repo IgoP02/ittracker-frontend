@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination, Grid, Select, Loader, Segment } from "semantic-ui-react";
+import { Table, Pagination, Grid, Select, Loader, Segment, Message } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
+import getErrorMessages from "../utils/getErrorMessages";
 
 export default function TrackerTable() {
   const [perPage, setPerPage] = useState(10);
   const [tableData, setTableData] = useState();
   const [isLoading, setisLoading] = useState(true);
+  const [error, setError] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState();
 
   const getData = async (currentPage, perPage) => {
-    const { data } = await AxiosAdmin.get("/reports", {
-      params: { page: currentPage, perpage: perPage },
-    });
+    try {
+      const { data } = await AxiosAdmin.get("/reports", {
+        params: { page: currentPage, perpage: perPage },
+      });
 
-    console.log(typeof data.data);
+      console.log(typeof data.data);
 
-    setTableData(data.data);
-    setLastPage(data.last_page);
+      setTableData(data.data);
+      setLastPage(data.last_page);
+    } catch (error) {
+      if (error.response) {
+        setError(getErrorMessages(error.response.status));
+      } else if (error.message) {
+        setError(getErrorMessages(error.message));
+      }
+      setisLoading(false);
+    }
   };
   useEffect(() => {
-    if (!tableData) {
+    if (!tableData && !error) {
       getData(currentPage, perPage);
     } else if (tableData) {
       setisLoading(false);
@@ -79,6 +90,13 @@ export default function TrackerTable() {
           </Grid.Column>
         </Grid.Row>
       </Grid>
+    );
+  } else if (error) {
+    console.log(error);
+    return (
+      <Segment basic style={{ marginLeft: "16em" }}>
+        <Message error content={error} size={"huge"} />
+      </Segment>
     );
   }
   return (

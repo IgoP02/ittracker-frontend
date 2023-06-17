@@ -5,7 +5,11 @@ const errorMessages = {
   500: "Algo está mal en su solicitud",
   network: "El servidor no se encuentra disponible o hay un problema de red",
 };
-
+/**
+ * Returns a string containing a message corresponding to the provided code or message
+ * @param {Number|String} response Status code or message to be used as key
+ * @returns {String} Error message
+ */
 function getErrorMessages(response) {
   if (response >= 400 && response <= 420) {
     return errorMessages[400];

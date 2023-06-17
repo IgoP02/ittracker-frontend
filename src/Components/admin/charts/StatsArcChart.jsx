@@ -1,15 +1,25 @@
 import { Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 // import { Chart as ChartJS } from "chart.js/auto";
-import { Label, Loader } from "semantic-ui-react";
+import { Label, Loader, Message } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
+import getErrorMessages from "../../utils/getErrorMessages";
 
-export default function StatsArcChart({ labelStyle, barChange, barField }) {
-  const [field, setField] = useState();
+export default function StatsArcChart({ labelStyle, barField }) {
+  const [error, setError] = useState();
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const getData = async () => {
-    setChartData(await fetchStats("department"));
+    try {
+      setChartData(await fetchStats("department"));
+    } catch (error) {
+      if (error.response) {
+        setError(getErrorMessages(error.response.status));
+      } else if (error.message) {
+        setError(getErrorMessages(error.message));
+      }
+      setIsLoading(false);
+    }
   };
   useEffect(() => {
     if (!chartData) {
@@ -20,7 +30,7 @@ export default function StatsArcChart({ labelStyle, barChange, barField }) {
       console.log(chartData);
       setIsLoading(false);
     }
-  }, [field, chartData]);
+  }, [chartData, barField]);
 
   if (isLoading == true) {
     return (
@@ -35,6 +45,8 @@ export default function StatsArcChart({ labelStyle, barChange, barField }) {
         style={{ marginTop: "2em" }}
       />
     );
+  } else if (error) {
+    <Message error content={error} />;
   }
   const data = {
     datasets: [
@@ -68,18 +80,6 @@ export default function StatsArcChart({ labelStyle, barChange, barField }) {
       },
     },
   };
-  return (
-    <>
-      <Label
-        style={{
-          fontSize: "15px",
-          backgroundColor: "rgb(215,215,215,0.2)",
-        }}
-        attached="top"
-        content="Reportes Activos por Departamento"
-        as="h5"
-      />
-      <Bar options={options} data={data} />
-    </>
-  );
+  return <Bar options={options} data={data} />;
+  w;
 }

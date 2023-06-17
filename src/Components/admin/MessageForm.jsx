@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Form, Icon, Label, Message, Select, TextArea } from "semantic-ui-react";
 import { AxiosAdmin } from "../utils/axiosClients";
-import getErrorMessages from "../utils/getErrorMessage";
+import getErrorMessages from "../utils/getErrorMessages";
 
 export default function MessageForm({ labelStyle, setLatestMessageData }) {
   const [response, setResponse] = useState();

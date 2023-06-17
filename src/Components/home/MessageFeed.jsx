@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Divider, Feed, Icon, Label, Loader, Message, Segment } from "semantic-ui-react";
 import { axiosApi } from "../utils/axiosClients";
+import getErrorMessages from "../utils/getErrorMessages";
 
 export default function MessageFeed() {
   const [messages, setMessages] = useState();
@@ -15,10 +16,11 @@ export default function MessageFeed() {
       setMessages(data);
     } catch (error) {
       if (error.response) {
-        setError(error.response);
+        setError(error.response.status);
       } else if (error.message) {
         setError(error.message);
       }
+      setIsloading(false);
     }
   };
   useEffect(() => {
@@ -32,7 +34,7 @@ export default function MessageFeed() {
   if (isLoading == true) {
     return <Loader active content="Cargando" />;
   } else if (error) {
-    return <Message content={error} error />;
+    return <Message content={getErrorMessages(error)} error />;
   }
   const msgarr = messages.map((d) => {
     return (

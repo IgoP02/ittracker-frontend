@@ -3,17 +3,29 @@ import { useEffect, useState } from "react";
 // import { Chart as ChartJS } from "chart.js/auto";
 import { Label, Loader } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
-export default function StatsBarChart({ labelStyle, arcChange, arcField }) {
+import getErrorMessages from "../../utils/getErrorMessages";
+
+export default function StatsBarChart({ style, arcChange, arcField }) {
   const [field, setField] = useState();
+  const [error, setError] = useState();
+
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const getData = async () => {
-    setChartData(await fetchStats("type"));
+    try {
+      setChartData(await fetchStats("type"));
+    } catch (error) {
+      if (error.response) {
+        setError(getErrorMessages(error.response.status));
+      } else if (error.message) {
+        setError(getErrorMessages(error.message));
+      }
+      setIsLoading(false);
+    }
   };
   useEffect(() => {
     if (!chartData) {
       getData();
-      console.log(typeof chartData, " ", chartData);
     }
     if (chartData != null && chartData != "Network Error") {
       console.log(chartData);
@@ -50,12 +62,10 @@ export default function StatsBarChart({ labelStyle, arcChange, arcField }) {
     responsive: true,
   };
   return (
-    <>
-      <Label style={labelStyle} attached="top" content="Reportes Semanales por Tipo" />
-      <Doughnut
-        options={{ ...options, maintainAspectRatio: false, responsive: true }}
-        data={data}
-      />
-    </>
+    <Doughnut
+      style={style ? style : null}
+      options={{ ...options, maintainAspectRatio: false, responsive: true }}
+      data={data}
+    />
   );
 }

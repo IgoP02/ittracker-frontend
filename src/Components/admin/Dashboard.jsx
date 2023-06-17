@@ -1,4 +1,4 @@
-import { Grid, Icon, Segment } from "semantic-ui-react";
+import { Grid, Icon, Label, Segment } from "semantic-ui-react";
 import StatsArcChart from "./charts/StatsArcChart";
 import StatsBarChart from "./charts/StatsBarChart";
 import MessageForm from "./MessageForm";
@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
 import { AxiosAdmin } from "../utils/axiosClients";
-import "../utils/getErrorMessage";
+import "../utils/getErrorMessages";
 
 export default function Dashboard() {
   const [barField, setBarField] = useState("");
@@ -37,6 +37,16 @@ export default function Dashboard() {
         <span>
           <Icon name="user" />
           Analista
+        </span>
+      ),
+      value: "assignee",
+    },
+    {
+      key: "assignee",
+      text: (
+        <span>
+          <Icon name="type" />
+          Tipo
         </span>
       ),
       value: "assignee",
@@ -105,10 +115,26 @@ export default function Dashboard() {
         <Grid.Row></Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>
-            <Segment size="tiny" style={{ height: "300px", width: "300px" }} textAlign="center">
-              <StatsBarChart labelStyle={labelStyle} />
+            <Segment size="tiny" style={{ height: "350px", width: "350px" }} textAlign="center">
+              <Label style={labelStyle} attached="top">
+                Reportes Semanales por
+                <ChartSelector
+                  placeholder=""
+                  attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
+                  options={[{ key: "a", text: "a", value: "a" }]}
+                />
+              </Label>
+              <StatsBarChart labelStyle={labelStyle} style={{ paddingTop: "0.5em" }} />
             </Segment>
-            <Segment style={{ height: "300px", width: "500px" }} textAlign="center">
+            <Segment style={{ height: "350px", width: "550px" }} textAlign="center">
+              <Label style={labelStyle} attached="top">
+                Reportes Activos por
+                <ChartSelector
+                  placeholder=""
+                  attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
+                  options={[{ key: "b", text: "b", value: "b" }]}
+                />
+              </Label>
               <StatsArcChart labelStyle={labelStyle} />
             </Segment>
           </Segment.Group>
