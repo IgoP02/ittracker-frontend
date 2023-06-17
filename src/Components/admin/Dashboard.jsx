@@ -13,10 +13,9 @@ import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 
 export default function Dashboard() {
-  const [barField, setBarField] = useState("");
-  const [arcField, setArcField] = useState("");
+  const [chartFields, setChartFields] = useState({ doughChart: "type", barChart: "department" });
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
-  const [userName, setUserName] = useState(getUserName());
+  const userName = getUserName();
   const [MessageData, setMessageData] = useState();
   const [errors, setErrors] = useState({});
 
@@ -29,7 +28,7 @@ export default function Dashboard() {
           Departamento
         </span>
       ),
-      value: "deps",
+      value: "department",
     },
     {
       key: "assignee",
@@ -42,14 +41,13 @@ export default function Dashboard() {
       value: "assignee",
     },
     {
-      key: "assignee",
+      key: "type",
       text: (
         <span>
-          <Icon name="type" />
-          Tipo
+          <Icon name="bug" /> Tipo
         </span>
       ),
-      value: "assignee",
+      value: "type",
     },
   ];
   const getMessage = async () => {
@@ -90,16 +88,6 @@ export default function Dashboard() {
   };
   const rowPadding = { padding: "0" };
 
-  const chartSelector = () => {
-    return (
-      <ChartSelector
-        options={chartSelectorOptions}
-        onChange={(e, d) => {
-          setBarField({ value: d.value, text: d.text });
-        }}
-      />
-    );
-  };
   if (loggedIn == false) {
     return;
   }
@@ -115,27 +103,45 @@ export default function Dashboard() {
         <Grid.Row></Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>
-            <Segment size="tiny" style={{ height: "350px", width: "350px" }} textAlign="center">
+            <Segment size="tiny" style={{ height: "400px", width: "400px" }} textAlign="center">
               <Label style={labelStyle} attached="top">
                 Reportes Semanales por
                 <ChartSelector
-                  placeholder=""
+                  field={chartFields.doughChart}
                   attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
-                  options={[{ key: "a", text: "a", value: "a" }]}
+                  options={chartSelectorOptions}
+                  onChange={(e, d) => {
+                    console.log("value ", d.value);
+                    setChartFields({ ...chartFields, doughChart: d.value });
+                    console.log("chartfield ", chartFields.doughChart);
+                  }}
                 />
               </Label>
-              <StatsDoughChart labelStyle={labelStyle} style={{ paddingTop: "0.5em" }} />
+              <StatsDoughChart
+                attributes={{ style: { paddingTop: "1.5em" } }}
+                style={{ paddingTop: "0.5em" }}
+                doughField={chartFields.doughChart}
+              />
             </Segment>
-            <Segment style={{ height: "350px", width: "550px" }} textAlign="center">
+            <Segment style={{ departmentheight: "400px", width: "600px" }} textAlign="center">
               <Label style={labelStyle} attached="top">
                 Reportes Activos por
                 <ChartSelector
+                  field={chartFields.barChart}
                   placeholder=""
                   attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
-                  options={[{ key: "b", text: "b", value: "b" }]}
+                  options={chartSelectorOptions}
+                  onChange={(e, d) => {
+                    console.log(d);
+
+                    setChartFields({ ...chartFields, barChart: d.value });
+                  }}
                 />
               </Label>
-              <StatsBarChart labelStyle={labelStyle} />
+              <StatsBarChart
+                attributes={{ style: { paddingTop: "1.5em" } }}
+                barField={chartFields.barChart}
+              />
             </Segment>
           </Segment.Group>
         </Grid.Column>

@@ -1,17 +1,20 @@
 import { Bar } from "react-chartjs-2";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 // import { Chart as ChartJS } from "chart.js/auto";
 import { Label, Loader, Message } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
 import getStatusDisplayMessage from "../../utils/getStatusDisplayMessage";
 
-export default function StatsBarChart({ labelStyle, barField }) {
+export default function StatsBarChart({ labelStyle, barField, attributes }) {
   const [error, setError] = useState();
+  const [oldField, setOldField] = useState();
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const getData = async () => {
+  const getData = async (field) => {
     try {
-      setChartData(await fetchStats("department"));
+      setOldField(barField);
+      setChartData(await fetchStats(field));
     } catch (error) {
       if (error.response) {
         setError(getStatusDisplayMessage(error.response.status));
@@ -22,15 +25,24 @@ export default function StatsBarChart({ labelStyle, barField }) {
     }
   };
   useEffect(() => {
+    console.log("o", oldField);
+    console.log("c", chartData);
+
     if (!chartData) {
-      getData();
-      console.log(chartData);
+      getData(barField);
+      console.log("equal");
+    } else if (chartData && oldField != barField) {
+      setIsLoading(true);
+      getData(barField);
+      console.log("not equal");
     }
-    if (chartData != null && chartData != "Network Error") {
+    if (chartData && chartData != "Network Error" && typeof chartData === "object") {
+      console.log("fine");
       console.log(chartData);
       setIsLoading(false);
+      return;
     }
-  }, [chartData, barField]);
+  }, [barField, chartData]);
 
   if (isLoading == true) {
     return (
@@ -80,5 +92,5 @@ export default function StatsBarChart({ labelStyle, barField }) {
       },
     },
   };
-  return <Bar options={options} data={data} />;
+  return <Bar {...attributes} options={options} data={data} />;
 }

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination, Grid, Select, Loader, Segment, Message } from "semantic-ui-react";
+import {
+  Table,
+  Pagination,
+  Grid,
+  Select,
+  Loader,
+  Segment,
+  Message,
+  Header,
+} from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
@@ -103,13 +112,16 @@ export default function TrackerTable() {
     <Grid style={{ width: "100%" }}>
       <Grid.Row style={{ padding: "0px" }}>
         <Grid.Row>
-          <Select
-            defaultValue={10}
-            compact
-            options={displayRowOptions(10)}
-            onChange={handlePageCount}></Select>
+          <Segment basic>
+            <Header size="small" content="Reportes por página" />
+            <Select
+              defaultValue={20}
+              compact
+              options={displayRowOptions(5)}
+              onChange={handlePageCount}></Select>
+          </Segment>
         </Grid.Row>
-        <Table celled selectable striped sortable>
+        <Table selectable striped sortable>
           <Table.Header>
             <SortableTHead columns={columns} handleSorting={handleSorting} />
           </Table.Header>
@@ -139,7 +151,7 @@ const displayRowOptions = (count = 1) => {
   const options = [];
   let rownum = 0;
   for (let i = 1; i < count + 1; i++) {
-    rownum = i * 10;
+    rownum = i * 20;
     options.push({ key: `show${rownum}rows`, value: rownum, text: rownum });
   }
   return options;
