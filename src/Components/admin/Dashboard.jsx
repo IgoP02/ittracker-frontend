@@ -1,5 +1,5 @@
 import { Grid, Icon, Label, Segment } from "semantic-ui-react";
-import StatsBarChart from "./charts/StatsDoughChart";
+import StatsBarChart from "./charts/StatsBarChart";
 import StatsDoughChart from "./charts/StatsDoughChart";
 import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
