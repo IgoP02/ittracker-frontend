@@ -73,7 +73,9 @@ export default function TrackerTable() {
       <Grid centered style={{ marginLeft: "40em", marginTop: "10em" }}>
         <Grid.Row textAlign="center">
           <Grid.Column textAlign="center">
-            <Loader active>Cargando</Loader>
+            <Loader active size="huge">
+              Cargando
+            </Loader>
           </Grid.Column>
         </Grid.Row>
       </Grid>
