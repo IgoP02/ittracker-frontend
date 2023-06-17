@@ -1,6 +1,6 @@
 import { Grid, Icon, Label, Segment } from "semantic-ui-react";
-import StatsArcChart from "./charts/StatsArcChart";
-import StatsBarChart from "./charts/StatsBarChart";
+import StatsBarChart from "./charts/StatsDoughChart";
+import StatsDoughChart from "./charts/StatsDoughChart";
 import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
 import { AxiosAdmin } from "../utils/axiosClients";
-import "../utils/getErrorMessages";
+import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 
 export default function Dashboard() {
   const [barField, setBarField] = useState("");
@@ -58,9 +58,9 @@ export default function Dashboard() {
       setMessageData(data);
     } catch (error) {
       if (error.response) {
-        setErrors({ ...errors, message: getErrorMessages(error.response.status) });
+        setErrors({ ...errors, message: getStatusDisplayMessage(error.response.status) });
       } else if (error.message) {
-        setErrors({ ...errors, message: getErrorMessages(error.message) });
+        setErrors({ ...errors, message: getStatusDisplayMessage(error.message) });
       }
     }
   };
@@ -70,9 +70,9 @@ export default function Dashboard() {
       const { status } = await AxiosAdmin.get("/messages/delete");
     } catch (error) {
       if (error.response) {
-        setErrors({ ...errors, message: getErrorMessages(error.response.status) });
+        setErrors({ ...errors, message: getStatusDisplayMessage(error.response.status) });
       } else if (error.message) {
-        setErrors({ ...errors, message: getErrorMessages(error.message) });
+        setErrors({ ...errors, message: getStatusDisplayMessage(error.message) });
       }
     }
   };
@@ -124,7 +124,7 @@ export default function Dashboard() {
                   options={[{ key: "a", text: "a", value: "a" }]}
                 />
               </Label>
-              <StatsBarChart labelStyle={labelStyle} style={{ paddingTop: "0.5em" }} />
+              <StatsDoughChart labelStyle={labelStyle} style={{ paddingTop: "0.5em" }} />
             </Segment>
             <Segment style={{ height: "350px", width: "550px" }} textAlign="center">
               <Label style={labelStyle} attached="top">
@@ -135,7 +135,7 @@ export default function Dashboard() {
                   options={[{ key: "b", text: "b", value: "b" }]}
                 />
               </Label>
-              <StatsArcChart labelStyle={labelStyle} />
+              <StatsBarChart labelStyle={labelStyle} />
             </Segment>
           </Segment.Group>
         </Grid.Column>
