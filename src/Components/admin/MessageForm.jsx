@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Form, Icon, Label, Message, Select, TextArea } from "semantic-ui-react";
 import { AxiosAdmin } from "../utils/axiosClients";
-import getErrorMessages from "../utils/getErrorMessages";
+import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 
 export default function MessageForm({ labelStyle, setLatestMessageData }) {
   const [response, setResponse] = useState();
@@ -135,7 +135,7 @@ export default function MessageForm({ labelStyle, setLatestMessageData }) {
         response >= 200 && response < 400 ? (
           <Message content="Mensaje publicado exitosamente" success />
         ) : (
-          <Message error content={response && getErrorMessages(response)} />
+          <Message error content={response && getStatusDisplayMessage(response)} />
         )
       ) : null}
       {typeof errors?.submit === "string" && <Message error content={errors.submit} />}

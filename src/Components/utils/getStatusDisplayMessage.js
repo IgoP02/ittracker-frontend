@@ -6,11 +6,12 @@ const errorMessages = {
   network: "El servidor no se encuentra disponible o hay un problema de red",
 };
 /**
- * Returns a string containing a message corresponding to the provided code or message
+ * Returns a string containing a message corresponding to the provided HTTTP code
+ * or response message
  * @param {Number|String} response Status code or message to be used as key
  * @returns {String} Error message
  */
-function getErrorMessages(response) {
+function getStatusDisplayMessage(response) {
   if (response >= 400 && response <= 420) {
     return errorMessages[400];
   } else if (typeof response === "number") {
@@ -20,4 +21,4 @@ function getErrorMessages(response) {
   }
 }
 
-export default getErrorMessages;
+export default getStatusDisplayMessage;

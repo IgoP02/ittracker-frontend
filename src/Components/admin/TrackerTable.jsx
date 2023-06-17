@@ -3,7 +3,7 @@ import { Table, Pagination, Grid, Select, Loader, Segment, Message } from "seman
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
-import getErrorMessages from "../utils/getErrorMessages";
+import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 
 export default function TrackerTable() {
   const [perPage, setPerPage] = useState(10);
@@ -25,9 +25,9 @@ export default function TrackerTable() {
       setLastPage(data.last_page);
     } catch (error) {
       if (error.response) {
-        setError(getErrorMessages(error.response.status));
+        setError(getStatusDisplayMessage(error.response.status));
       } else if (error.message) {
-        setError(getErrorMessages(error.message));
+        setError(getStatusDisplayMessage(error.message));
       }
       setisLoading(false);
     }

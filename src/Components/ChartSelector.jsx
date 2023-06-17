@@ -6,12 +6,11 @@ export default function ChartSelector({
   onChange,
   attributes,
   placeholder = "Reportes por...",
+  children,
 }) {
   return (
-    <Select
-      {...attributes}
-      placeholder={placeholder}
-      options={options}
-      onChange={onChange}></Select>
+    <Select {...attributes} placeholder={placeholder} options={options} onChange={onChange}>
+      {children}
+    </Select>
   );
 }
