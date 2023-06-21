@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Dropdown, Select } from "semantic-ui-react";
+import { useEffect, useState } from "react";
+import { Select } from "semantic-ui-react";
 import { statusStyles } from "../tablestyles";
 import capitalize from "../utils/capitalize";
-import refStateHook from "../utils/refStateHook";
+
+/**
+ *
+ * @param {String} currentStatus default status for selector
+ * @param {Function} handleStatusChange callback for handling the status change
+ * @param {Number} currentRow  current row if the component is part of an iterable
+ * @param {Number} reportId  report identifier obtained from the API
+ * @param {Boolean} fromTable whether or not the element is being rendered as part of a table
+ */
 
 export default function StatusSelector({
   currentStatus,
   handleStatusChange,
-  currentRow,
+  currentRow = 1,
   reportId,
+  fromTable,
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState({ selected: currentStatus });
@@ -59,11 +68,15 @@ export default function StatusSelector({
 
   function handleChange(e, d) {
     setStatus({ ...status, selected: capitalize(d.value) });
-    handleStatusChange(capitalize(d.value), currentRow, reportId);
-    //console.log("selected", selected);
-    if (isLoading) {
-      return <p>is loading</p>;
+    if (fromTable === true && handleStatusChange) {
+      handleStatusChange(capitalize(d.value), currentRow, reportId);
+    } else {
+      handleStatusChange(capitalize(d.value), reportId);
     }
+    //console.log("selected", selected);
+  }
+  if (isLoading) {
+    return <p>Cargando</p>;
   }
   return (
     <Select

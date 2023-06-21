@@ -1,7 +1,6 @@
 import { Table } from "semantic-ui-react";
 import { priorityStyles } from "../tablestyles";
 import { AxiosAdmin } from "../utils/axiosClients";
-import { getToken } from "../utils/manageLogin";
 import StatusSelector from "./StatusSelector";
 
 export default function SortableTableBody({ columns, tableData, setTableData }) {
@@ -39,6 +38,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
                   currentRow={index}
                   reportId={row.id}
                   handleStatusChange={handleStatusChange}
+                  fromTable={true}
                 />
               ) : (
                 row[column.key]

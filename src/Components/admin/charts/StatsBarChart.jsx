@@ -1,12 +1,11 @@
-import { Bar } from "react-chartjs-2";
-import _ from "lodash";
-import { useEffect, useState } from "react";
-// import { Chart as ChartJS } from "chart.js/auto";
-import { Label, Loader, Message } from "semantic-ui-react";
+import { Bar, Pie, Line } from "react-chartjs-2";
+// import dataLabelsPlugin from "chartjs-plugin-datalabels";
+import { forwardRef, useEffect, useState } from "react";
+import { Loader, Message } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
 import getStatusDisplayMessage from "../../utils/getStatusDisplayMessage";
 
-export default function StatsBarChart({ labelStyle, barField, attributes }) {
+export default forwardRef(function StatsBarChart({ barField, attributes }, ref) {
   const [error, setError] = useState();
   const [oldField, setOldField] = useState();
   const [chartData, setChartData] = useState();
@@ -30,15 +29,13 @@ export default function StatsBarChart({ labelStyle, barField, attributes }) {
 
     if (!chartData) {
       getData(barField);
-      console.log("equal");
+      console.log("first chardata");
     } else if (chartData && oldField != barField) {
       setIsLoading(true);
       getData(barField);
-      console.log("not equal");
+      console.log("not equal", chartData);
     }
     if (chartData && chartData != "Network Error" && typeof chartData === "object") {
-      console.log("fine");
-      console.log(chartData);
       setIsLoading(false);
       return;
     }
@@ -61,15 +58,17 @@ export default function StatsBarChart({ labelStyle, barField, attributes }) {
     <Message error content={error} />;
   }
   const data = {
+    labels: Object.keys(chartData),
     datasets: [
       {
         label: "Reportes activos",
-        data: chartData,
-        backgroundColor: "rgb(242, 26, 36, 0.85)",
+        data: Object.values(chartData),
+        backgroundColor: "rgb(220, 56, 66)",
       },
     ],
   };
   const options = {
+    devicePixelRatio: 3,
     maintainAspectRatio: false,
     responsive: true,
     animation: false,
@@ -87,10 +86,14 @@ export default function StatsBarChart({ labelStyle, barField, attributes }) {
       },
     },
     plugins: {
-      legend: {
-        display: false,
+      datalabels: {
+        align: "center",
+        anchor: "center",
+        color: "white",
+        font: { size: 14, weight: "bold" },
       },
+      legend: { display: false },
     },
   };
-  return <Bar {...attributes} options={options} data={data} />;
-}
+  return <Bar {...attributes} options={options} data={data} ref={ref} />;
+});

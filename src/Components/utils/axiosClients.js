@@ -1,10 +1,12 @@
 import axios from "axios";
 import { getToken } from "./manageLogin";
 
-const csrfAxios = axios.create({ baseURL: "http://api.ittracker.test/sanctum/csrf-cookie" });
+const apiURL = import.meta.env.VITE_API_URL;
+
+const csrfAxios = axios.create({ baseURL: `${apiURL}/sanctum/csrf-cookie` });
 
 const AxiosAdmin = axios.create({
-  baseURL: "http://api.ittracker.test/api/",
+  baseURL: `${apiURL}/api/`,
   headers: {
     Authorization: `Bearer ${getToken()}`,
     Accept: "Application/json",
@@ -12,7 +14,7 @@ const AxiosAdmin = axios.create({
 });
 
 const axiosApi = axios.create({
-  baseURL: "http://api.ittracker.test/api",
+  baseURL: `${apiURL}/api`,
 });
 
 export { AxiosAdmin, axiosApi, csrfAxios };

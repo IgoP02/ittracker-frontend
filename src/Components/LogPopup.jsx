@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Grid, Header, Icon, Input, Message, Modal } from "semantic-ui-react";
 import { Form as routerForm } from "react-router-dom";
 import { LoginContext } from "../main";
@@ -11,10 +11,21 @@ export default function LogPopup({ isOpen, setIsOpen }) {
   const [errors, setErrors] = useState({
     username: true,
     password: true,
-    submit: null,
+    submit: false,
     name: true,
   });
   const [submitAttempt, setSubmitAttempt] = useState(false);
+
+  const resetStates = () => {
+    setSubmitAttempt(false);
+    setFormData({ username: "", password: "" });
+    setErrors({
+      username: true,
+      password: true,
+      submit: false,
+      name: true,
+    });
+  };
 
   async function handleChange(e, d) {
     setFormData({ ...formData, [d.id]: d.value });
@@ -55,7 +66,7 @@ export default function LogPopup({ isOpen, setIsOpen }) {
     } catch (error) {
       setErrors({ ...errors, submit: error.response.status });
       setSubmitAttempt(true);
-      setFormData({ username: "", password: "" });
+      // setFormData({ username: "", password: "" });
 
       console.log(error.response.status);
     }
@@ -67,7 +78,10 @@ export default function LogPopup({ isOpen, setIsOpen }) {
       size="tiny"
       open={isOpen}
       onOpen={() => setIsOpen(true)}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+        resetStates();
+      }}
       dimmer="blurring">
       <Header attached="top" size="large">
         Iniciar Sesión
@@ -117,9 +131,14 @@ export default function LogPopup({ isOpen, setIsOpen }) {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button size="large" color="red" style={{ marginTop: "1em" }} onClick={HandleLogIn}>
-                Iniciar Sesión
-              </Button>
+              <Button
+                icon="sign-in"
+                size="large"
+                color="red"
+                style={{ marginTop: "1em" }}
+                onClick={HandleLogIn}
+                content="Iniciar Sesión"
+              />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>

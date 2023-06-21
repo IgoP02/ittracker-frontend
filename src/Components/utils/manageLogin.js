@@ -39,12 +39,22 @@ function removeLogged() {
 function isLogged() {
   return Cookies.get("logged") ? true : false;
 }
+/**
+ * set username to cookies
+ */
 function setUserName(userName) {
   localStorage.setItem("user_name", userName);
 }
+/**
+ * Gets username from cookies if set
+ * @returns {string}
+ */
 function getUserName() {
   return localStorage.getItem("user_name");
 }
+/**
+ * Removes username from cookies if set
+ */
 function removeUserName() {
   return localStorage.removeItem("user_name");
 }

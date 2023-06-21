@@ -28,8 +28,18 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import dataLabelsPlugin from "chartjs-plugin-datalabels";
+
 export const LoginContext = createContext();
-ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
+ChartJS.register(
+  ArcElement,
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  Legend,
+  Tooltip,
+  dataLabelsPlugin
+);
 function Main() {
   const [loggedIn, setLoggedIn] = useState(isLogged(false));
   const route = createBrowserRouter(

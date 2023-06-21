@@ -29,25 +29,34 @@ export default function RegisterForm() {
         },
       });
       setResponse(status);
-      setFormData();
+      setFormData({ username: "", email: "", password: "", name: "" });
     } catch (error) {
       console.log(error);
       if (error.response) {
         const reponseErrors = error.response.data.errors;
-
         setErrors({ ...errors, ...reponseErrors });
-        console.log(errors);
-      }
-      if (error.message) {
+      } else if (error.message) {
         setErrors(error.message);
       }
     }
-    console.log(formData);
+    console.log(errors);
   }
 
   return (
     <Segment>
       <Label attached="top">Registrar Nuevo Analista</Label>
+      {response ? (
+        response >= 200 && response < 400 && typeof errors == "object" ? (
+          <Message icon="check" success content="Usuario Registrado Exitosamente" />
+        ) : (
+          false
+        )
+      ) : null}
+      {typeof errors == "string" && errors.includes("Network") ? (
+        <Message error content="Algo ha salido mal" />
+      ) : (
+        false
+      )}
       <Form onSubmit={handleSubmit}>
         <Form.Field
           control={Input}
@@ -81,9 +90,7 @@ export default function RegisterForm() {
               ? errors.username == true
                 ? { content: "Nombre de usuario requerido" }
                 : errors.username[0]
-                ? errors.username[0].includes("taken")
-                  ? "Nombre de usuario ya existe"
-                  : null
+                ? "Nombre de usuario ya existe"
                 : null
               : null
           }
@@ -133,18 +140,6 @@ export default function RegisterForm() {
           <Button content="Registrar" icon="add user" color="red" />
         </Segment>
       </Form>
-      {response ? (
-        response >= 200 && response < 400 && typeof errors == "object" ? (
-          <Message success content="Usuario Registrado Exitosamente" />
-        ) : (
-          false
-        )
-      ) : null}
-      {typeof errors == "string" && errors.includes("Network") ? (
-        <Message error content="Algo ha salido mal" />
-      ) : (
-        false
-      )}
     </Segment>
   );
 }

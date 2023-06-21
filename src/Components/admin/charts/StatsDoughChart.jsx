@@ -1,11 +1,11 @@
 import { Doughnut } from "react-chartjs-2";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 // import { Chart as ChartJS } from "chart.js/auto";
 import { Loader, Message } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
 import getStatusDisplayMessage from "../../utils/getStatusDisplayMessage";
 
-export default function StatsDoughChart({ attributes, doughField }) {
+export default forwardRef(function StatsDoughChart({ attributes, doughField }, ref) {
   const [error, setError] = useState();
   const [oldField, setOldField] = useState();
   const [chartData, setChartData] = useState();
@@ -64,14 +64,23 @@ export default function StatsDoughChart({ attributes, doughField }) {
     ],
   };
   const options = {
+    devicePixelRatio: 2,
     animation: false,
     responsive: true,
   };
   return (
     <Doughnut
+      ref={ref}
       {...attributes}
-      options={{ ...options, maintainAspectRatio: false, responsive: true }}
+      options={{
+        ...options,
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          datalabels: { color: "white", font: { family: "inter", size: 18, weight: "bold" } },
+        },
+      }}
       data={data}
     />
   );
-}
+});
