@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
+import StatusSelector from "../admin/StatusSelector";
 import { CustomPara } from "../general_components/CustomPara";
 import { axiosApi } from "../utils/axiosClients";
 
@@ -127,6 +128,9 @@ export default function ShowReport() {
             </Segment>
           </Segment.Group>
         </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <StatusSelector />
       </Grid.Row>
     </Grid>
   );

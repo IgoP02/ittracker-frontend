@@ -72,7 +72,7 @@ function NavBar() {
               icon={loggedIn ? { name: "sign out", size: "large" } : null}
               content={loggedIn ? "Cerrar Sesión" : "Iniciar Sesión"}
               color={loggedIn ? "red" : "blue"}
-              style={{ borderRadius: "1px" }}
+              style={{ borderRadius: "2px" }}
               onClick={loggedIn ? handleLogOut : toggleModal}
             />
           </Menu.Item>
