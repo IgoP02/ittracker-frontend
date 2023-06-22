@@ -12,7 +12,6 @@ export default function GlobalLayout() {
       <Container style={{ marginTop: "4.5em" }}>
         <Outlet />
       </Container>
-      <footer>Footer</footer>
     </>
   );
 }
