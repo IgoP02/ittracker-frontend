@@ -3,15 +3,6 @@ import { Select } from "semantic-ui-react";
 import { statusStyles } from "../tablestyles";
 import capitalize from "../utils/capitalize";
 
-/**
- *
- * @param {String} currentStatus default status for selector
- * @param {Function} handleStatusChange callback for handling the status change
- * @param {Number} currentRow  current row if the component is part of an iterable
- * @param {Number} reportId  report identifier obtained from the API
- * @param {Boolean} fromTable whether or not the element is being rendered as part of a table
- */
-
 export default function StatusSelector({
   currentStatus,
   handleStatusChange,
@@ -68,10 +59,12 @@ export default function StatusSelector({
 
   function handleChange(e, d) {
     setStatus({ ...status, selected: capitalize(d.value) });
-    if (fromTable === true && handleStatusChange) {
-      handleStatusChange(capitalize(d.value), currentRow, reportId);
-    } else {
-      handleStatusChange(capitalize(d.value), reportId);
+    if (handleStatusChange) {
+      if (fromTable === true) {
+        handleStatusChange(capitalize(d.value), currentRow, reportId);
+      } else {
+        handleStatusChange(capitalize(d.value), reportId);
+      }
     }
     //console.log("selected", selected);
   }
@@ -86,6 +79,7 @@ export default function StatusSelector({
       direction="right"
       style={{ ...statusStyles[currentStatus.at(0)], borderRadius: "0px" }}
       onChange={handleChange}
+      fluid
     />
   );
 }
