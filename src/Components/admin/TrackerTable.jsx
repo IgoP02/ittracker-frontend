@@ -8,14 +8,18 @@ import {
   Segment,
   Message,
   Header,
+  Checkbox,
 } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
+import { ToastContainer } from "react-toastify";
+import { filter } from "lodash";
 
 export default function TrackerTable() {
   const [perPage, setPerPage] = useState(10);
+  const [filters, setFilters] = useState({ active: false, pending: false });
   const [tableData, setTableData] = useState();
   const [isLoading, setisLoading] = useState(true);
   const [error, setError] = useState();
@@ -25,7 +29,12 @@ export default function TrackerTable() {
   const getData = async (currentPage, perPage) => {
     try {
       const { data } = await AxiosAdmin.get("/reports", {
-        params: { page: currentPage, perpage: perPage },
+        params: {
+          page: currentPage,
+          perpage: perPage,
+          active: filters.active,
+          pending: filters.pending,
+        },
       });
 
       console.log(typeof data.data);
@@ -34,8 +43,11 @@ export default function TrackerTable() {
       setLastPage(data.last_page);
     } catch (error) {
       if (error.response) {
+        console.log(error);
         setError(getStatusDisplayMessage(error.response.status));
       } else if (error.message) {
+        console.log(error);
+
         setError(getStatusDisplayMessage(error.message));
       }
       setisLoading(false);
@@ -52,7 +64,7 @@ export default function TrackerTable() {
   useEffect(() => {
     console.log(currentPage);
     getData(currentPage, perPage);
-  }, [currentPage, perPage]);
+  }, [currentPage, perPage, filters]);
 
   const columns = [
     { label: "ID", key: "id", sortable: true },
@@ -65,6 +77,11 @@ export default function TrackerTable() {
     { label: "Assignee", key: "assignee", sortable: true },
     { label: "Date", key: "date", sortable: true },
   ];
+
+  function handleFilterChange(e, d) {
+    setFilters((oldFilters) => ({ ...filters, [d.id]: !oldFilters[d.id] }));
+  }
+
   function handlePageCount(e, d) {
     setPerPage(d.value);
   }
@@ -110,16 +127,27 @@ export default function TrackerTable() {
   }
   return (
     <Grid style={{ width: "100%" }}>
+      <ToastContainer />
       <Grid.Row style={{ padding: "0px" }}>
         <Grid.Row>
-          <Segment basic>
-            <Header size="small" content="Reportes por página" />
-            <Select
-              defaultValue={20}
-              compact
-              options={displayRowOptions(5)}
-              onChange={handlePageCount}></Select>
-          </Segment>
+          <Segment.Group horizontal>
+            <Segment basic>
+              <Header size="small" content="Reportes por página" />
+              <Select
+                style={{ marginLeft: "2em" }}
+                defaultValue={20}
+                compact
+                options={displayRowOptions(5)}
+                onChange={handlePageCount}
+              />
+            </Segment>
+            <Segment basic>
+              <Checkbox label="Reportes Activos" slider id="active" onChange={handleFilterChange} />
+            </Segment>
+            <Segment basic>
+              <Checkbox label="No asignados" slider id="pending" onChange={handleFilterChange} />
+            </Segment>
+          </Segment.Group>
         </Grid.Row>
         <Table selectable striped sortable>
           <Table.Header>
