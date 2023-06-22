@@ -30,6 +30,7 @@ import {
   Tooltip,
 } from "chart.js";
 import dataLabelsPlugin from "chartjs-plugin-datalabels";
+import { ToastContainer } from "react-toastify";
 
 export const LoginContext = createContext();
 ChartJS.register(
@@ -76,6 +77,7 @@ function Main() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <ToastContainer hideProgressBar limit={2} />
     <Main />
   </React.StrictMode>
 );
