@@ -14,6 +14,7 @@ import CreateReport from "./Components/reports/CreateReport";
 import Dashboard from "./Components/admin/Dashboard";
 import ProtectedRoute from "./Components/utils/ProtectedRoute";
 import TestComponent from "./Components/TestComponent";
+import "react-toastify/dist/ReactToastify.css";
 import "./assets/App.css";
 import Tracker from "./Components/admin/Tracker";
 import { isLogged } from "./Components/utils/manageLogin";
