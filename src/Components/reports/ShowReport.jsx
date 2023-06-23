@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
 import { LoginContext } from "../../main";
 import StatusSelector from "../admin/StatusSelector";
@@ -58,13 +58,13 @@ export default function ShowReport() {
         },
       });
       status == 200 ? setReport({ ...report, status: newStatus, assignee: data.assignee }) : null;
+      toast.success("Reporte actualizado");
     } catch (error) {
       handleResponseErrors(error);
     }
   };
 
   useEffect(() => {
-    toast("hi");
     if (!report) {
       fetchReport();
     } else if (report) {
@@ -107,7 +107,6 @@ export default function ShowReport() {
   };
   return (
     <>
-      <ToastContainer hideProgressBar />
       <Grid centered textAlign="center" style={{ marginTop: "3em" }}>
         <Grid.Row>
           <Grid.Column>
