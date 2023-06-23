@@ -134,7 +134,7 @@ export default function LogPopup({ isOpen, setIsOpen }) {
               <Button
                 icon="sign-in"
                 size="large"
-                color="red"
+                color="green"
                 style={{ marginTop: "1em" }}
                 onClick={HandleLogIn}
                 content="Iniciar Sesión"
