@@ -22,7 +22,7 @@ export default function RegisterForm() {
   }
   async function handleSubmit(e, d) {
     try {
-      const { data, statusText, status } = await axiosApi.post("register", formData, {
+      const { status } = await axiosApi.post("register", formData, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
           Accept: "Application/json",
@@ -64,6 +64,7 @@ export default function RegisterForm() {
           id="name"
           name="name"
           type="text"
+          value={formData.name}
           label="Name"
           error={
             /^[A-Z]\w+\b(\s[A-Z])?\s\b[A-Z]\w+/g.test(formData.name) == true || formData.name == ""
@@ -84,6 +85,7 @@ export default function RegisterForm() {
           id="username"
           name="username"
           type="text"
+          value={formData.username}
           label="Username"
           error={
             errors.username
@@ -103,14 +105,13 @@ export default function RegisterForm() {
           id="email"
           type="email"
           label="Email"
+          value={formData.email}
           error={
-            errors.email
-              ? errors.email == true
-                ? { content: "Email requerido" }
-                : errors.email[0]
-                ? errors.email[0].includes("taken")
-                  ? "Email inválido o tomado"
-                  : null
+            errors.email && typeof errors.email != "object"
+              ? { content: "Email requerido" }
+              : errors.email[0]
+              ? errors.email[0].includes("taken")
+                ? "Email inválido o tomado"
                 : null
               : null
           }
@@ -123,6 +124,7 @@ export default function RegisterForm() {
           id="password"
           type="password"
           label="Password"
+          value={formData.password}
           error={
             errors.password
               ? errors.password == true
