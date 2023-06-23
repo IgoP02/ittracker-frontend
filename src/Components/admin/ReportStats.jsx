@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Loader } from "semantic-ui-react";
+import { toast } from "react-toastify";
+import { Card, Loader, Message } from "semantic-ui-react";
 import fetchStats from "../utils/fetchStats";
+import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 export default function ReportStats({ data, setStatusStats }) {
   const style = { fontSize: "32px", color: "rgb(0,0,0,0.8)", textAlign: "center" };
   const descStyle = { fontSize: "20px", textAlign: "center" };
@@ -9,17 +11,39 @@ export default function ReportStats({ data, setStatusStats }) {
   const [isLoading, setisLoading] = useState(true);
 
   const getPerStats = async () => {
-    let data = await fetchStats("status");
-    setStats(data);
-    setStatusStats(data);
+    try {
+      let data = await fetchStats("status");
+      setStats(data);
+      setStatusStats(data);
+    } catch (error) {
+      if (error.response) {
+        setError(true);
+        toast.error(getStatusDisplayMessage(error.response.status), { autoClose: false });
+      } else if (error.message) {
+        setError(true);
+        toast.error("El servidor no está disponible o hay un problema de conexión", {
+          autoClose: false,
+        });
+      }
+      console.log("failed");
+      setError(true);
+    }
     console.log(stats);
   };
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      getPerStats();
+    }, 6000);
+    return () => {
+      clearInterval(intervalID);
+    };
+  }, []);
 
   useEffect(() => {
     if (!stats) {
       getPerStats();
     } else if (stats != null && stats != "Network Error") {
-      console.log(stats.Asignado);
+      console.log(stats.asignado);
       setisLoading(false);
     }
   }, [stats]);
@@ -52,7 +76,7 @@ export default function ReportStats({ data, setStatusStats }) {
       },
     ];
   }
-  if (isLoading || !items) {
+  if (isLoading) {
     return (
       <div style={{ marginBottom: "3em" }}>
         <Loader
@@ -65,6 +89,7 @@ export default function ReportStats({ data, setStatusStats }) {
       </div>
     );
   }
+
   return (
     <>
       <Card.Group items={items} stackable centered />
