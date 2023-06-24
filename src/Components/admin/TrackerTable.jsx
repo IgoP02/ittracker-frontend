@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Table,
   Pagination,
@@ -62,7 +62,7 @@ export default function TrackerTable() {
   };
   useEffect(() => {
     if (!tableData && !error) {
-      getData(currentPage, perPage);
+      getData(currentPage, perPage, assignee);
     } else if (tableData) {
       setisLoading(false);
     }
@@ -70,7 +70,7 @@ export default function TrackerTable() {
 
   useEffect(() => {
     console.log(currentPage);
-    getData(currentPage, perPage);
+    getData(currentPage, perPage, assignee);
   }, [currentPage, perPage, filters]);
 
   const columns = [
@@ -96,9 +96,9 @@ export default function TrackerTable() {
     }
   }
 
-  function handleAssigneeSearch() {
+  const handleAssigneeSearch = useCallback(() => {
     getData(currentPage, perPage, assignee);
-  }
+  }, [currentPage, perPage, assignee]);
 
   function handlePageCount(e, d) {
     setPerPage(d.value);
