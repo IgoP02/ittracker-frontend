@@ -43,14 +43,13 @@ export default function MaintenanceMenu() {
         : { days: deletionData.days, status: deletionData.status };
     if (deletionData.days) {
       try {
-        const response = await AxiosAdmin.delete("reports/clear", {
+        const { status, data } = await AxiosAdmin.delete("reports/clear", {
           params: params,
         });
-        console.log(response);
         setResponse({
           ...response,
           error: null,
-          success: { code: response.status, data: response.data },
+          success: { code: status, data: data },
         });
       } catch (error) {
         if (error.response) {
