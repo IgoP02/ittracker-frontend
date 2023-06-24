@@ -1,4 +1,4 @@
-import { Grid, Icon, Label, Segment } from "semantic-ui-react";
+import { Button, Grid, Header, Icon, Label, Modal, Segment } from "semantic-ui-react";
 import StatsBarChart from "./charts/StatsBarChart";
 import StatsDoughChart from "./charts/StatsDoughChart";
 import MessageForm from "./MessageForm";
@@ -6,19 +6,25 @@ import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 import RegisterForm from "./RegisterForm";
 import { getUserName } from "../utils/manageLogin";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
 import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
+import MaintenanceMenu from "./MaintenanceMenu";
+import PDFGenerator from "./PDFGenerator";
 
 export default function Dashboard() {
-  const [barField, setBarField] = useState("");
-  const [arcField, setArcField] = useState("");
+  const [chartFields, setChartFields] = useState({ doughChart: "type", barChart: "department" });
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
-  const [userName, setUserName] = useState(getUserName());
+  const [modalStates, setModalStates] = useState({ registerForm: false, MaintenanceMenu: false });
+  const userName = getUserName();
   const [MessageData, setMessageData] = useState();
   const [errors, setErrors] = useState({});
+  const barChartRef = useRef();
+  const doughChartRef = useRef();
+
+  const [statusStats, setStatusStats] = useState();
 
   const chartSelectorOptions = [
     {
@@ -29,7 +35,7 @@ export default function Dashboard() {
           Departamento
         </span>
       ),
-      value: "deps",
+      value: "department",
     },
     {
       key: "assignee",
@@ -42,17 +48,16 @@ export default function Dashboard() {
       value: "assignee",
     },
     {
-      key: "assignee",
+      key: "type",
       text: (
         <span>
-          <Icon name="type" />
-          Tipo
+          <Icon name="bug" /> Tipo
         </span>
       ),
-      value: "assignee",
+      value: "type",
     },
   ];
-  const getMessage = async () => {
+  const getMessage = useCallback(async () => {
     try {
       const { status, data } = await AxiosAdmin.get("/messages/latest");
       setMessageData(data);
@@ -63,8 +68,8 @@ export default function Dashboard() {
         setErrors({ ...errors, message: getStatusDisplayMessage(error.message) });
       }
     }
-  };
-  const clearMessage = async () => {
+  }, [MessageData]);
+  const clearMessage = useCallback(async () => {
     setMessageData();
     try {
       const { status } = await AxiosAdmin.get("/messages/delete");
@@ -75,7 +80,7 @@ export default function Dashboard() {
         setErrors({ ...errors, message: getStatusDisplayMessage(error.message) });
       }
     }
-  };
+  }, [MessageData]);
   useEffect(() => {
     if (!MessageData) {
       getMessage();
@@ -90,54 +95,127 @@ export default function Dashboard() {
   };
   const rowPadding = { padding: "0" };
 
-  const chartSelector = () => {
-    return (
-      <ChartSelector
-        options={chartSelectorOptions}
-        onChange={(e, d) => {
-          setBarField({ value: d.value, text: d.text });
-        }}
-      />
-    );
-  };
   if (loggedIn == false) {
     return;
   }
 
   return (
     <Grid relaxed centered stackable columns="equal">
-      <Grid.Row>
+      <Grid.Row style={{ padding: "5px" }}>
         <Grid.Column>
-          <ReportStats />
+          <ReportStats setStatusStats={setStatusStats} />
         </Grid.Column>
       </Grid.Row>
       <Grid.Row columns={1} style={{ ...rowPadding }}>
-        <Grid.Row></Grid.Row>
         <Grid.Column>
           <Segment.Group horizontal>
-            <Segment size="tiny" style={{ height: "350px", width: "350px" }} textAlign="center">
+            <Segment size="tiny" style={{ height: "400px", width: "400px" }} textAlign="center">
               <Label style={labelStyle} attached="top">
                 Reportes Semanales por
                 <ChartSelector
-                  placeholder=""
+                  field={chartFields.doughChart}
                   attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
-                  options={[{ key: "a", text: "a", value: "a" }]}
+                  options={chartSelectorOptions}
+                  onChange={(e, d) => {
+                    console.log("chartfield ", chartFields.doughChart);
+
+                    console.log("texto ", d.text);
+                    console.log("value ", d.value);
+                    setChartFields({ ...chartFields, doughChart: d.value });
+                    console.log("chartfield ", chartFields.doughChart);
+                  }}
                 />
               </Label>
-              <StatsDoughChart labelStyle={labelStyle} style={{ paddingTop: "0.5em" }} />
+              <StatsDoughChart
+                ref={doughChartRef}
+                attributes={{ style: { paddingTop: "1.5em" } }}
+                style={{ paddingTop: "0.5em" }}
+                doughField={chartFields.doughChart}
+              />
             </Segment>
-            <Segment style={{ height: "350px", width: "550px" }} textAlign="center">
+            <Segment style={{ height: "400px", width: "600px" }} textAlign="center">
               <Label style={labelStyle} attached="top">
                 Reportes Activos por
                 <ChartSelector
+                  field={chartFields.barChart}
                   placeholder=""
                   attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
-                  options={[{ key: "b", text: "b", value: "b" }]}
+                  options={chartSelectorOptions}
+                  onChange={(e, d) => {
+                    console.log(d);
+
+                    setChartFields({ ...chartFields, barChart: d.value });
+                  }}
                 />
               </Label>
-              <StatsBarChart labelStyle={labelStyle} />
+              <StatsBarChart
+                ref={barChartRef}
+                attributes={{ style: { paddingTop: "1.5em" } }}
+                barField={chartFields.barChart}
+              />
             </Segment>
           </Segment.Group>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column width={8}>
+          <PDFGenerator
+            barChartRef={barChartRef}
+            doughChartRef={doughChartRef}
+            statusStats={statusStats}
+            fields={chartFields}
+          />
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row columns={1}>
+        <Grid.Column textAlign="center">
+          <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
+          {userName === "admin" ? (
+            <>
+              <Button
+                active={true}
+                fluid
+                size="huge"
+                color="red"
+                icon="eraser"
+                content="Limpieza de Reportes"
+                onClick={() => setModalStates({ ...modalStates, MaintenanceMenu: true })}
+              />
+              <Modal
+                open={modalStates.MaintenanceMenu}
+                onClose={() => setModalStates({ ...modalStates, MaintenanceMenu: false })}>
+                <MaintenanceMenu />
+              </Modal>
+            </>
+          ) : null}
+          {userName == "admin" ? (
+            <>
+              <Grid.Column textAlign="center">
+                <Button
+                  active={true}
+                  style={{ transition: "2000ms" }}
+                  fluid
+                  size="huge"
+                  color="blue"
+                  icon="add user"
+                  content="Registro de Analistas"
+                  onClick={() => setModalStates({ ...modalStates, registerForm: true })}
+                />
+              </Grid.Column>
+
+              <Modal
+                open={modalStates.registerForm}
+                onClose={() => setModalStates({ ...modalStates, registerForm: false })}>
+                <Header
+                  icon="add user"
+                  content="Registro de Analistas"
+                  color="red"
+                  attached="top"
+                />
+                <RegisterForm />
+              </Modal>
+            </>
+          ) : null}
         </Grid.Column>
       </Grid.Row>
       <Grid.Row style={rowPadding}>
@@ -145,9 +223,7 @@ export default function Dashboard() {
           <Segment>
             <MessageForm labelStyle={labelStyle} setLatestMessageData={setMessageData} />
           </Segment>
-          <Grid.Row style={{ marginTop: "1em" }}>
-            {userName == "admin" ? <RegisterForm /> : null}
-          </Grid.Row>
+          <Grid.Row textAlign="center" style={{ marginTop: "1em" }}></Grid.Row>
         </Grid.Column>
         <Grid.Column width={6}>
           <Grid.Row>

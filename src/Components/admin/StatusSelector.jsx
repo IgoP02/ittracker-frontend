@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Dropdown, Select } from "semantic-ui-react";
+import { useEffect, useState } from "react";
+import { Select } from "semantic-ui-react";
 import { statusStyles } from "../tablestyles";
 import capitalize from "../utils/capitalize";
-import refStateHook from "../utils/refStateHook";
 
 export default function StatusSelector({
   currentStatus,
   handleStatusChange,
-  currentRow,
+  currentRow = 1,
   reportId,
+  fromTable,
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState({ selected: currentStatus });
@@ -59,11 +59,17 @@ export default function StatusSelector({
 
   function handleChange(e, d) {
     setStatus({ ...status, selected: capitalize(d.value) });
-    handleStatusChange(capitalize(d.value), currentRow, reportId);
-    //console.log("selected", selected);
-    if (isLoading) {
-      return <p>is loading</p>;
+    if (handleStatusChange) {
+      if (fromTable === true) {
+        handleStatusChange(capitalize(d.value), currentRow, reportId);
+      } else {
+        handleStatusChange(capitalize(d.value), reportId);
+      }
     }
+    //console.log("selected", selected);
+  }
+  if (isLoading) {
+    return <p>Cargando</p>;
   }
   return (
     <Select
@@ -73,6 +79,7 @@ export default function StatusSelector({
       direction="right"
       style={{ ...statusStyles[currentStatus.at(0)], borderRadius: "0px" }}
       onChange={handleChange}
+      fluid
     />
   );
 }

@@ -87,6 +87,8 @@ export default function MessageForm({ labelStyle, setLatestMessageData }) {
   return (
     <>
       <Label style={{ ...labelStyle, backgroundColor: "rgb(255,100,100,0.8)" }} attached="top">
+        <Icon name="add" />
+        <Icon name="announcement" />
         Publicar Anuncio
       </Label>
       <Form size="large" onSubmit={handleSubmit}>
@@ -113,7 +115,7 @@ export default function MessageForm({ labelStyle, setLatestMessageData }) {
           control={TextArea}
           name="message"
           id="message"
-          rows={6}
+          rows={3}
           onChange={handleChange}
           value={formData.message}
           error={

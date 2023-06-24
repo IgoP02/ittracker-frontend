@@ -1,20 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Card, Loader } from "semantic-ui-react";
+import { toast } from "react-toastify";
+import { Card, Loader, Message } from "semantic-ui-react";
 import fetchStats from "../utils/fetchStats";
-export default function ReportStats({ data }) {
+import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
+export default function ReportStats({ data, setStatusStats }) {
   const style = { fontSize: "32px", color: "rgb(0,0,0,0.8)", textAlign: "center" };
   const descStyle = { fontSize: "20px", textAlign: "center" };
+
   const [stats, setStats] = useState();
   const [isLoading, setisLoading] = useState(true);
+
   const getPerStats = async () => {
-    setStats(await fetchStats("status"));
+    try {
+      let data = await fetchStats("status");
+      setStats(data);
+      setStatusStats(data);
+    } catch (error) {
+      if (error.response) {
+        toast.error(getStatusDisplayMessage(error.response.status), { autoClose: false });
+      } else if (error.message) {
+        toast.error("El servidor no está disponible o hay un problema de conexión", {
+          autoClose: false,
+        });
+      }
+      console.log("failed");
+    }
     console.log(stats);
   };
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      getPerStats();
+    }, 6000);
+    return () => {
+      clearInterval(intervalID);
+    };
+  }, []);
+
   useEffect(() => {
     if (!stats) {
       getPerStats();
     } else if (stats != null && stats != "Network Error") {
-      console.log(stats.Asignado);
+      console.log(stats.asignado);
       setisLoading(false);
     }
   }, [stats]);
@@ -22,32 +48,41 @@ export default function ReportStats({ data }) {
   if (stats) {
     var items = [
       {
-        header: { content: stats.Asignado, style: style },
+        header: { content: stats.asignado, style: style },
         description: { content: "Reportes asignados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(20,100,200,0.5)" },
         key: "11",
       },
       {
-        header: { content: stats.Pendiente, style: style },
+        header: { content: stats.pendiente, style: style },
         description: { content: "Reportes pendientes", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(200,200,0,0.6)" },
         key: "12",
       },
       {
-        header: { content: stats.Solucionado, style: style },
+        header: { content: stats.solucionado, style: style },
         description: { content: "Reportes solucionados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(5,100,10,0.5)" },
         key: "15",
       },
       {
-        header: { content: stats.Cerrado, style: style },
+        header: { content: stats.cerrado, style: style },
         description: { content: "Reportes cerrados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(50,50,100,0.2)" },
         key: "101",
       },
+      {
+        header: {
+          content: stats.cerrado + stats.pendiente + stats.solucionado + stats.asignado,
+          style: style,
+        },
+        description: { content: "Total", style: descStyle },
+        style: { width: "10em", backgroundColor: "rgb(220,220,220,0.3)" },
+        key: "101",
+      },
     ];
   }
-  if (isLoading || !items) {
+  if (isLoading) {
     return (
       <div style={{ marginBottom: "3em" }}>
         <Loader
@@ -60,6 +95,7 @@ export default function ReportStats({ data }) {
       </div>
     );
   }
+
   return (
     <>
       <Card.Group items={items} stackable centered />

@@ -14,6 +14,7 @@ import CreateReport from "./Components/reports/CreateReport";
 import Dashboard from "./Components/admin/Dashboard";
 import ProtectedRoute from "./Components/utils/ProtectedRoute";
 import TestComponent from "./Components/TestComponent";
+import "react-toastify/dist/ReactToastify.css";
 import "./assets/App.css";
 import Tracker from "./Components/admin/Tracker";
 import { isLogged } from "./Components/utils/manageLogin";
@@ -28,8 +29,19 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import dataLabelsPlugin from "chartjs-plugin-datalabels";
+import { ToastContainer } from "react-toastify";
+
 export const LoginContext = createContext();
-ChartJS.register(ArcElement, LinearScale, CategoryScale, BarElement, Legend, Tooltip);
+ChartJS.register(
+  ArcElement,
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  Legend,
+  Tooltip,
+  dataLabelsPlugin
+);
 function Main() {
   const [loggedIn, setLoggedIn] = useState(isLogged(false));
   const route = createBrowserRouter(
@@ -58,6 +70,7 @@ function Main() {
   );
   return (
     <LoginContext.Provider value={[loggedIn, setLoggedIn]}>
+      <ToastContainer hideProgressBar limit={2} />
       <RouterProvider router={route} />
     </LoginContext.Provider>
   );

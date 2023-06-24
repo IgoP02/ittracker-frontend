@@ -9,10 +9,9 @@ export default function GlobalLayout() {
       <Header>
         <NavBar />
       </Header>
-      <Container style={{ marginTop: "4.5em" }}>
+      <Container style={{ marginTop: "4.5em", paddingBottom: "5em" }}>
         <Outlet />
       </Container>
-      <footer>Footer</footer>
     </>
   );
 }

@@ -58,12 +58,16 @@ export default function MessageFeed() {
   return (
     <Segment>
       <Label
+        icon="announcement"
         color="red"
+        size="large"
         style={{ backgroundColor: "rgb(255, 255, 255,0.1)" }}
-        content={<p>Anuncios</p>}
+        content="Anuncios"
         attached="top"
       />
-      <Feed size="small">{msgarr}</Feed>
+      <Feed size="small" style={{ paddingTop: "1em" }}>
+        {msgarr}
+      </Feed>
     </Segment>
   );
 }

@@ -1,19 +1,19 @@
 import { Doughnut } from "react-chartjs-2";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 // import { Chart as ChartJS } from "chart.js/auto";
-import { Label, Loader } from "semantic-ui-react";
+import { Loader, Message } from "semantic-ui-react";
 import fetchStats from "../../utils/fetchStats";
 import getStatusDisplayMessage from "../../utils/getStatusDisplayMessage";
 
-export default function StatsDoughChart({ style, arcChange, arcField }) {
-  const [field, setField] = useState();
+export default forwardRef(function StatsDoughChart({ attributes, doughField }, ref) {
   const [error, setError] = useState();
-
+  const [oldField, setOldField] = useState();
   const [chartData, setChartData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const getData = async () => {
+  const getData = async (field) => {
     try {
-      setChartData(await fetchStats("type"));
+      setOldField(doughField);
+      setChartData(await fetchStats(field));
     } catch (error) {
       if (error.response) {
         setError(getStatusDisplayMessage(error.response.status));
@@ -25,13 +25,17 @@ export default function StatsDoughChart({ style, arcChange, arcField }) {
   };
   useEffect(() => {
     if (!chartData) {
-      getData();
+      getData(doughField);
+      console.log(doughField);
+    } else if (chartData && oldField != doughField) {
+      setIsLoading(true);
+      getData(doughField);
     }
     if (chartData != null && chartData != "Network Error") {
       console.log(chartData);
       setIsLoading(false);
     }
-  }, [field, chartData]);
+  }, [doughField, chartData]);
 
   if (isLoading == true) {
     return (
@@ -46,6 +50,8 @@ export default function StatsDoughChart({ style, arcChange, arcField }) {
         style={{ marginTop: "2em" }}
       />
     );
+  } else if (error) {
+    <Message error content={error} />;
   }
   const data = {
     labels: Object.keys(chartData),
@@ -58,14 +64,23 @@ export default function StatsDoughChart({ style, arcChange, arcField }) {
     ],
   };
   const options = {
+    devicePixelRatio: 2,
     animation: false,
     responsive: true,
   };
   return (
     <Doughnut
-      style={style ? style : null}
-      options={{ ...options, maintainAspectRatio: false, responsive: true }}
+      ref={ref}
+      {...attributes}
+      options={{
+        ...options,
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          datalabels: { color: "white", font: { family: "inter", size: 18, weight: "bold" } },
+        },
+      }}
       data={data}
     />
   );
-}
+});
