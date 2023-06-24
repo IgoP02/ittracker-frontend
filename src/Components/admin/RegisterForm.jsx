@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Button, Form, Grid, Input, Label, Message, Segment } from "semantic-ui-react";
-import { axiosApi } from "../utils/axiosClients";
+import React, { useState } from "react";
+import { Button, Form, Header, Input, Label, Message, Segment } from "semantic-ui-react";
+import { AxiosAdmin } from "../utils/axiosClients";
 import { getToken } from "../utils/manageLogin";
 
 export default function RegisterForm() {
@@ -22,12 +22,7 @@ export default function RegisterForm() {
   }
   async function handleSubmit(e, d) {
     try {
-      const { status } = await axiosApi.post("register", formData, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          Accept: "Application/json",
-        },
-      });
+      const { status } = await AxiosAdmin.post("register", formData);
       setResponse(status);
       setFormData({ username: "", email: "", password: "", name: "" });
     } catch (error) {
@@ -44,7 +39,6 @@ export default function RegisterForm() {
 
   return (
     <Segment>
-      <Label attached="top">Registrar Nuevo Analista</Label>
       {response ? (
         response >= 200 && response < 400 && typeof errors == "object" ? (
           <Message icon="check" success content="Usuario Registrado Exitosamente" />
@@ -58,6 +52,9 @@ export default function RegisterForm() {
         false
       )}
       <Form onSubmit={handleSubmit}>
+        <Header dividing sub style={{ marginBottom: "1em" }}>
+          Registrar Analista
+        </Header>
         <Form.Field
           control={Input}
           required
@@ -67,7 +64,9 @@ export default function RegisterForm() {
           value={formData.name}
           label="Name"
           error={
-            /^[A-Z]\w+\b(\s[A-Z])?\s\b[A-Z]\w+/g.test(formData.name) == true || formData.name == ""
+            (/^[A-Z]\w+\b(\s[A-Z])?\s\b[A-Z]\w+$/g.test(formData.name) == true &&
+              !/\d/g.test(formData.name)) ||
+            formData.name == ""
               ? errors.name
                 ? errors.name == true
                   ? { content: "Nombre de usuario requerido" }
@@ -139,7 +138,7 @@ export default function RegisterForm() {
           onChange={handleChange}
         />
         <Segment basic textAlign="center">
-          <Button content="Registrar" icon="add user" color="red" />
+          <Button content="Registrar" icon="add user" color="red" fluid />
         </Segment>
       </Form>
     </Segment>
