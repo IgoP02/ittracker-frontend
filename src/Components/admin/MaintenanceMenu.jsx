@@ -43,11 +43,15 @@ export default function MaintenanceMenu() {
         : { days: deletionData.days, status: deletionData.status };
     if (deletionData.days) {
       try {
-        const { data, status } = await AxiosAdmin.delete("reports/clear", {
+        const response = await AxiosAdmin.delete("reports/clear", {
           params: params,
         });
-        console.log(data);
-        setResponse({ ...response, error: null, success: { code: status, data: data } });
+        console.log(response);
+        setResponse({
+          ...response,
+          error: null,
+          success: { code: response.status, data: response.data },
+        });
       } catch (error) {
         if (error.response) {
           setResponse({ ...response, error: error.response.status, success: null });
@@ -92,6 +96,9 @@ export default function MaintenanceMenu() {
           setDeletionData({ ...deletionData, days: d.value });
         }}
       />
+      <span style={{ marginLeft: "1em", color: "GrayText" }}>
+        Seleccionar 0 como valor eliminará todos los reportes actuales
+      </span>
       <Button
         content="Limpiar"
         icon="delete"
