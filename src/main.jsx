@@ -70,6 +70,7 @@ function Main() {
   );
   return (
     <LoginContext.Provider value={[loggedIn, setLoggedIn]}>
+      <ToastContainer hideProgressBar limit={2} />
       <RouterProvider router={route} />
     </LoginContext.Provider>
   );
@@ -77,7 +78,6 @@ function Main() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ToastContainer hideProgressBar limit={2} />
     <Main />
   </React.StrictMode>
 );
