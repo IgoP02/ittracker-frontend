@@ -17,16 +17,13 @@ export default function ReportStats({ data, setStatusStats }) {
       setStatusStats(data);
     } catch (error) {
       if (error.response) {
-        setError(true);
         toast.error(getStatusDisplayMessage(error.response.status), { autoClose: false });
       } else if (error.message) {
-        setError(true);
         toast.error("El servidor no está disponible o hay un problema de conexión", {
           autoClose: false,
         });
       }
       console.log("failed");
-      setError(true);
     }
     console.log(stats);
   };
@@ -72,6 +69,15 @@ export default function ReportStats({ data, setStatusStats }) {
         header: { content: stats.cerrado, style: style },
         description: { content: "Reportes cerrados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(50,50,100,0.2)" },
+        key: "101",
+      },
+      {
+        header: {
+          content: stats.cerrado + stats.pendiente + stats.solucionado + stats.asignado,
+          style: style,
+        },
+        description: { content: "Total", style: descStyle },
+        style: { width: "10em", backgroundColor: "rgb(220,220,220,0.3)" },
         key: "101",
       },
     ];
