@@ -1,4 +1,4 @@
-import { Grid, Header, Icon, Label, Segment } from "semantic-ui-react";
+import { Button, Grid, Header, Icon, Label, Modal, Segment } from "semantic-ui-react";
 import StatsBarChart from "./charts/StatsBarChart";
 import StatsDoughChart from "./charts/StatsDoughChart";
 import MessageForm from "./MessageForm";
@@ -6,7 +6,7 @@ import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 import RegisterForm from "./RegisterForm";
 import { getUserName } from "../utils/manageLogin";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
 import { AxiosAdmin } from "../utils/axiosClients";
@@ -17,6 +17,7 @@ import PDFGenerator from "./PDFGenerator";
 export default function Dashboard() {
   const [chartFields, setChartFields] = useState({ doughChart: "type", barChart: "department" });
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
+  const [modalStates, setModalStates] = useState({ registerForm: false, MaintenanceMenu: false });
   const userName = getUserName();
   const [MessageData, setMessageData] = useState();
   const [errors, setErrors] = useState({});
@@ -56,7 +57,7 @@ export default function Dashboard() {
       value: "type",
     },
   ];
-  const getMessage = async () => {
+  const getMessage = useCallback(async () => {
     try {
       const { status, data } = await AxiosAdmin.get("/messages/latest");
       setMessageData(data);
@@ -67,8 +68,8 @@ export default function Dashboard() {
         setErrors({ ...errors, message: getStatusDisplayMessage(error.message) });
       }
     }
-  };
-  const clearMessage = async () => {
+  }, [MessageData]);
+  const clearMessage = useCallback(async () => {
     setMessageData();
     try {
       const { status } = await AxiosAdmin.get("/messages/delete");
@@ -79,7 +80,7 @@ export default function Dashboard() {
         setErrors({ ...errors, message: getStatusDisplayMessage(error.message) });
       }
     }
-  };
+  }, [MessageData]);
   useEffect(() => {
     if (!MessageData) {
       getMessage();
@@ -169,6 +170,52 @@ export default function Dashboard() {
       <Grid.Row columns={1}>
         <Grid.Column textAlign="center">
           <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
+          {userName === "admin" ? (
+            <>
+              <Button
+                active={true}
+                fluid
+                size="huge"
+                color="red"
+                icon="eraser"
+                content="Limpieza de Reportes"
+                onClick={() => setModalStates({ ...modalStates, MaintenanceMenu: true })}
+              />
+              <Modal
+                open={modalStates.MaintenanceMenu}
+                onClose={() => setModalStates({ ...modalStates, MaintenanceMenu: false })}>
+                <MaintenanceMenu />
+              </Modal>
+            </>
+          ) : null}
+          {userName == "admin" ? (
+            <>
+              <Grid.Column textAlign="center">
+                <Button
+                  active={true}
+                  style={{ transition: "2000ms" }}
+                  fluid
+                  size="huge"
+                  color="blue"
+                  icon="add user"
+                  content="Registro de Analistas"
+                  onClick={() => setModalStates({ ...modalStates, registerForm: true })}
+                />
+              </Grid.Column>
+
+              <Modal
+                open={modalStates.registerForm}
+                onClose={() => setModalStates({ ...modalStates, registerForm: false })}>
+                <Header
+                  icon="add user"
+                  content="Registro de Analistas"
+                  color="red"
+                  attached="top"
+                />
+                <RegisterForm />
+              </Modal>
+            </>
+          ) : null}
         </Grid.Column>
       </Grid.Row>
       <Grid.Row style={rowPadding}>
@@ -176,14 +223,11 @@ export default function Dashboard() {
           <Segment>
             <MessageForm labelStyle={labelStyle} setLatestMessageData={setMessageData} />
           </Segment>
-          <Grid.Row style={{ marginTop: "1em" }}>
-            {userName == "admin" ? <RegisterForm /> : null}
-          </Grid.Row>
+          <Grid.Row textAlign="center" style={{ marginTop: "1em" }}></Grid.Row>
         </Grid.Column>
         <Grid.Column width={6}>
           <Grid.Row>
             <LatestMessage LatestMessageData={MessageData} removeMessage={clearMessage} />
-            {userName === "admin" ? <MaintenanceMenu /> : null}
           </Grid.Row>
         </Grid.Column>
       </Grid.Row>
