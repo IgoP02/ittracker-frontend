@@ -3,7 +3,7 @@ import { Button, Form, Grid, Header, Icon, Input, Message, Modal } from "semanti
 import { Form as routerForm } from "react-router-dom";
 import { LoginContext } from "../main";
 import { AxiosAdmin, axiosApi, csrfAxios } from "./utils/axiosClients";
-import { setToken, setLogged, setUserName, getToken } from "./utils/manageLogin";
+import { setToken, setLogged, setUserName, getToken, setName } from "./utils/manageLogin";
 
 export default function LogPopup({ isOpen, setIsOpen }) {
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
@@ -60,6 +60,8 @@ export default function LogPopup({ isOpen, setIsOpen }) {
       setToken(data.access_token);
       setFormData({ username: "", password: "" });
       setUserName(data.username);
+      setName(data?.name);
+
       setLoggedIn(true);
       setLogged();
       setIsOpen(false);

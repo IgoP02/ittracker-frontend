@@ -53,11 +53,28 @@ function getUserName() {
   return localStorage.getItem("user_name");
 }
 /**
- * Removes username from cookies if set
+ * Removes name from cookies if set
  */
 function removeUserName() {
   return localStorage.removeItem("user_name");
 }
+
+function getName() {
+  return localStorage.getItem("name");
+}
+/**
+ * Removes name from cookies if set
+ */
+function removeName() {
+  return localStorage.removeItem("name");
+}
+/**
+ * Sets name to cookies
+ */
+function setName(name) {
+  localStorage.setItem("name", name);
+}
+
 export {
   setToken,
   getToken,
@@ -68,4 +85,7 @@ export {
   getUserName,
   setUserName,
   removeUserName,
+  setName,
+  getName,
+  removeName,
 };

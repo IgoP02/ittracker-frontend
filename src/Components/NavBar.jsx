@@ -4,7 +4,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button, Container, Image, Menu } from "semantic-ui-react";
 import { LoginContext } from "../main";
 import LogPopup from "./LogPopup";
-import { deleteToken, getToken, removeLogged, removeUserName } from "./utils/manageLogin";
+import {
+  deleteToken,
+  getName,
+  getToken,
+  getUserName,
+  removeLogged,
+  removeName,
+  removeUserName,
+} from "./utils/manageLogin";
 import axios from "axios";
 
 function NavBar() {
@@ -12,12 +20,11 @@ function NavBar() {
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState(
-    location.pathname.split("/")[1] ? location.pathname.split("/")[1] : "home"
-  );
+  const [activeItem, setActiveItem] = useState(location.pathname.split("/")[1] || "home");
 
   function handleItemClick(e, { name }) {
     if (loggedIn == false && name == "admin") {
+      setActiveItem(location.pathname.split("/")[1] || "home");
       return;
     }
     setActiveItem(name);
@@ -33,8 +40,10 @@ function NavBar() {
     });
     setLoggedIn(false);
     removeUserName();
+    removeName();
     removeLogged();
     deleteToken();
+    setActiveItem("home");
     navigate("/", true);
   }
   function toggleModal() {
@@ -66,7 +75,7 @@ function NavBar() {
             onClick={handleItemClick}>
             Administración
           </Menu.Item>
-          <Menu.Item name="logItem" style={{ marginRight: "10px" }} position="right">
+          <Menu.Item name="logItem" style={{ marginRight: "1em" }} position="right">
             <Button
               name="logItem"
               icon={loggedIn ? { name: "sign out", size: "large" } : null}
@@ -76,6 +85,13 @@ function NavBar() {
               onClick={loggedIn ? handleLogOut : toggleModal}
             />
           </Menu.Item>
+          {loggedIn && getUserName() != "admin" ? (
+            <Menu.Item name="loggedUser">
+              <p style={{ fontSize: "1.1em" }}>
+                Bienvenido/a, <span style={{ fontWeight: "bold" }}> {getName()} </span>{" "}
+              </p>
+            </Menu.Item>
+          ) : null}
         </Container>
       </Menu>
     </>
