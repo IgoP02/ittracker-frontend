@@ -1,9 +1,9 @@
 import { Button, Divider, Feed, Icon, Label, Loader, Segment } from "semantic-ui-react";
-
+import { memo } from "react";
 const messageTypes = { m: "Mantenimiento", o: "Interrupción de Servicios", i: "Información" };
 const messageIcons = { m: "wrench", o: "shutdown", i: "exclamation" };
 
-export default function LatestMessage({ LatestMessageData, removeMessage }) {
+export default memo(function LatestMessage({ LatestMessageData, removeMessage }) {
   if (!LatestMessageData) {
     return (
       <Segment padded clearing textAlign="center">
@@ -19,6 +19,7 @@ export default function LatestMessage({ LatestMessageData, removeMessage }) {
           style={{ backgroundColor: "rgb(255,100,100,0.8)" }}
           size="large"
           attached="top">
+          <Icon name="announcement" />
           Anuncio más Reciente
         </Label>
 
@@ -44,4 +45,4 @@ export default function LatestMessage({ LatestMessageData, removeMessage }) {
       </Segment>
     </>
   );
-}
+});
