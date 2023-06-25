@@ -28,7 +28,7 @@ export default function ReportStats({ data, setStatusStats }) {
     console.log(stats);
   };
   useEffect(() => {
-    const intervalID = setInterval(() => {
+    var intervalID = setInterval(() => {
       getPerStats();
     }, 6000);
     return () => {
@@ -74,7 +74,7 @@ export default function ReportStats({ data, setStatusStats }) {
       {
         header: {
           content: stats.cerrado + stats.pendiente + stats.solucionado + stats.asignado,
-          style: style,
+          style: { ...style, marginTop: "0.2em" },
         },
         description: { content: "Total", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(220,220,220,0.3)" },
