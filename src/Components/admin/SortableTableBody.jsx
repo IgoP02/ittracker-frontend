@@ -1,27 +1,54 @@
-import { memo, useMemo } from "react";
+import dayjs from "dayjs";
+import es from "dayjs/locale/es";
+import tz from "dayjs/plugin/timezone";
+import relativetime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+import { useMemo } from "react";
+import { toast } from "react-toastify";
 import { Table } from "semantic-ui-react";
 import { priorityStyles } from "../tablestyles";
 import { AxiosAdmin } from "../utils/axiosClients";
+import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
+import { getUserName } from "../utils/manageLogin";
 import StatusSelector from "./StatusSelector";
 
-export default (function SortableTableBody({ columns, tableData, setTableData }) {
+export default function SortableTableBody({ columns, tableData, setTableData }) {
+  dayjs.extend(utc);
+  dayjs.extend(tz);
+  dayjs.extend(relativetime);
+
+  // const diff = import("dayjs/plugin/d");
   async function handleStatusChange(status, i, id) {
-    const { data } = await AxiosAdmin.patch(`/reports/update/${id}`, undefined, {
-      params: {
-        status: status,
-      },
-    });
-    setTableData([
-      ...tableData.map((row, j) => {
-        if (i === j) {
-          // console.log("UPDATED ", status);
-          row.status = status;
-          row.status == "A" ? (row.assignee = data.assignee) : null;
+    if (getUserName() == "admin") {
+      toast.error("Usuario de administrador no está habilitado para funciones de analista", {
+        hideProgressBar: true,
+      });
+      return;
+    }
+    try {
+      const { data } = await AxiosAdmin.patch(`/reports/update/${id}`, undefined, {
+        params: {
+          status: status,
+        },
+      });
+
+      setTableData([
+        ...tableData.map((row, j) => {
+          if (i === j) {
+            // console.log("UPDATED ", status);
+            row.status = status;
+            if (row.status == "A") row.assignee = data.assignee;
+            if (row.status == "P") row.assignee = "NA";
+
+            return row;
+          }
           return row;
-        }
-        return row;
-      }),
-    ]);
+        }),
+      ]);
+    } catch (error) {
+      if (error.response) toast.error(getStatusDisplayMessage(error.response.status));
+      else if (error.message) toast.error(getStatusDisplayMessage(error.message));
+    }
   }
 
   const rows = useMemo(() => {
@@ -29,6 +56,7 @@ export default (function SortableTableBody({ columns, tableData, setTableData })
       return (
         <Table.Row key={`row_${index}`}>
           {columns.map((column) => {
+            const dayJsParsed = dayjs.utc(row[column.key]);
             return (
               <Table.Cell
                 key={`${column.key}_${index}`}
@@ -42,6 +70,10 @@ export default (function SortableTableBody({ columns, tableData, setTableData })
                     handleStatusChange={handleStatusChange}
                     fromTable={true}
                   />
+                ) : column.key == "date" ? (
+                  `${dayJsParsed
+                    .tz("America/Caracas")
+                    .format("D-MM-YYYY[,] hh:mm A")} (${dayJsParsed.locale("es").fromNow()})`
                 ) : (
                   row[column.key]
                 )}
@@ -53,4 +85,4 @@ export default (function SortableTableBody({ columns, tableData, setTableData })
     });
   }, [tableData]);
   return <Table.Body key="TrackerTableBody">{rows}</Table.Body>;
-});
+}
