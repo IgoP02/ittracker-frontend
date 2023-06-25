@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Table,
   Pagination,
@@ -12,12 +12,14 @@ import {
   Input,
   Button,
   Statistic,
+  Icon,
 } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 import { ToastContainer } from "react-toastify";
+import { debounce } from "lodash";
 
 export default function TrackerTable() {
   const assigneeRef = useRef();
@@ -73,33 +75,29 @@ export default function TrackerTable() {
     getData(currentPage, perPage, assignee);
   }, [currentPage, perPage, filters]);
 
-  const columns = [
-    { label: "ID", key: "id", sortable: true },
-    { label: "Department", key: "department", sortable: true },
-    { label: "Type", key: "type", sortable: true },
-    { label: "Issue", key: "issue", sortable: true },
-    { label: "Description", key: "description", sortable: false },
-    { label: "Status", key: "status", sortable: true },
-    { label: "Priority", key: "priority", sortable: true },
-    { label: "Assignee", key: "assignee", sortable: true },
-    { label: "Date", key: "date", sortable: true },
-  ];
+  const columns = useMemo(
+    () => [
+      { label: "Código", key: "id", sortable: true },
+      { label: "Departmento", key: "department", sortable: true },
+      { label: "Tipo", key: "type", sortable: true },
+      { label: "Problema", key: "issue", sortable: true },
+      { label: "Descripción", key: "description", sortable: false },
+      { label: "Estado", key: "status", sortable: true },
+      { label: "Prioridad", key: "priority", sortable: true },
+      { label: "Analista", key: "assignee", sortable: true },
+      { label: "Fecha", key: "date", sortable: true },
+    ],
+    []
+  );
+  const handleFilterChange = (e, d) => {
+    console.log(d.id, " changed");
+    setFilters((oldFilters) => ({ ...filters, [d.id]: !oldFilters[d.id] }));
+  };
 
-  function handleFilterChange(e, d) {
-    if (d.id == "assignee") {
-      console.log("assignee changed");
-      setAssignee(d.value);
-    } else {
-      console.log(d.id, " changed");
-
-      setFilters((oldFilters) => ({ ...filters, [d.id]: !oldFilters[d.id] }));
-    }
-  }
-
-  const handleAssigneeSearch = useCallback(() => {
+  const handleAssigneeSearch = () => {
     getData(currentPage, perPage, assignee);
-  }, [currentPage, perPage, assignee]);
-
+  };
+  const handleAssigneeChange = (value) => setAssignee(value);
   function handlePageCount(e, d) {
     setPerPage(d.value);
   }
@@ -107,6 +105,10 @@ export default function TrackerTable() {
     console.log(d.activePage);
     setCurrentPage(d.activePage);
   }
+
+  const updateTableData = useCallback(() => {
+    setTableData(params);
+  }, [tableData]);
 
   function handleSorting(key, sortOrder) {
     if (key) {
@@ -142,6 +144,24 @@ export default function TrackerTable() {
       </Segment>
     );
   }
+
+  const TablePaginator = ({ size = "huge" }) => {
+    return (
+      <Pagination
+        ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
+        firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+        lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+        prevItem={{ content: <Icon name="angle left" />, icon: true }}
+        nextItem={{ content: <Icon name="angle right" />, icon: true }}
+        tabular
+        size={size}
+        totalPages={lastPage}
+        activePage={currentPage}
+        onPageChange={handlePageChange}
+      />
+    );
+  };
+
   return (
     <Grid style={{ width: "100%" }}>
       <ToastContainer />
@@ -160,14 +180,14 @@ export default function TrackerTable() {
                 style={{ border: "none", paddingRight: "0.5em", fontWeight: "normal" }}
                 basic
                 size="large">
-                Reportes por Página
+                Reportes por página
               </Label>
             </Segment>
             <Segment basic>
               <Checkbox
                 checked={filters.active}
                 style={{ paddingTop: "1em" }}
-                label="Reportes Activos"
+                label="Reportes activos"
                 slider
                 id="active"
                 onChange={handleFilterChange}
@@ -196,7 +216,7 @@ export default function TrackerTable() {
                 size="mini"
                 id="assignee"
                 value={assignee}
-                onChange={handleFilterChange}
+                onChange={(e, d) => handleAssigneeChange(d.value)}
                 action={{ icon: { name: "search" }, onClick: handleAssigneeSearch }}
                 ref={assigneeRef}
               />
@@ -205,6 +225,7 @@ export default function TrackerTable() {
                 icon="eraser"
                 content="Limpiar"
                 size="tiny"
+                value={assignee}
                 color="google plus"
                 onClick={() => {
                   setAssignee("");
@@ -217,6 +238,9 @@ export default function TrackerTable() {
             </Segment>
           </Segment.Group>
         </Grid.Row>
+        <Segment basic style={{ margin: "auto", padding: "0" }} textAlign="center">
+          <TablePaginator key="pagTop" size="tiny" />
+        </Segment>
         <Table selectable striped sortable>
           <Table.Header>
             <SortableTHead columns={columns} handleSorting={handleSorting} />
@@ -225,18 +249,14 @@ export default function TrackerTable() {
             <SortableTableBody
               columns={columns}
               tableData={tableData}
-              setTableData={setTableData}
+              setTableData={updateTableData}
             />
           ) : null}
         </Table>
       </Grid.Row>
       <Grid.Row centered textAlign="center" style={{ padding: "0px" }}>
         <Grid.Column textAlign="center">
-          <Pagination
-            totalPages={lastPage}
-            activePage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          <TablePaginator key="pagBottom" />
         </Grid.Column>
       </Grid.Row>
     </Grid>
