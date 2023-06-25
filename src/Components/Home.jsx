@@ -1,4 +1,5 @@
 import { Grid } from "semantic-ui-react";
+import OwnReports from "./admin/OwnReports";
 import HomeOptions from "./home/HomeOptions";
 import MessageFeed from "./home/MessageFeed";
 export default function Home() {
