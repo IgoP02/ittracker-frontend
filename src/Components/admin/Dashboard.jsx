@@ -5,7 +5,7 @@ import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 import RegisterForm from "./RegisterForm";
-import { getUserName } from "../utils/manageLogin";
+import { getName, getUserName } from "../utils/manageLogin";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
@@ -13,11 +13,16 @@ import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 import MaintenanceMenu from "./MaintenanceMenu";
 import PDFGenerator from "./PDFGenerator";
+import OwnReports from "./OwnReports";
 
 export default function Dashboard() {
   const [chartFields, setChartFields] = useState({ doughChart: "type", barChart: "department" });
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
-  const [modalStates, setModalStates] = useState({ registerForm: false, MaintenanceMenu: false });
+  const [modalStates, setModalStates] = useState({
+    registerForm: false,
+    MaintenanceMenu: false,
+    ownReports: false,
+  });
   const userName = getUserName();
   const [MessageData, setMessageData] = useState();
   const [errors, setErrors] = useState({});
@@ -87,6 +92,9 @@ export default function Dashboard() {
     } else {
       console.log("MessageData", MessageData);
     }
+    return () => {
+      setModalStates({ registerForm: false, MaintenanceMenu: false, ownReports: false });
+    };
   }, [MessageData]);
 
   const labelStyle = {
@@ -170,6 +178,25 @@ export default function Dashboard() {
       <Grid.Row columns={1}>
         <Grid.Column textAlign="center">
           <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
+          <Button
+            content={
+              <span>
+                <Icon name="clipboard list" size="large" /> <Icon name="user" size="large" />{" "}
+                Reportes Tomados
+              </span>
+            }
+            color="green"
+            fluid
+            size="huge"
+            onClick={() => setModalStates({ ...modalStates, ownReports: true })}
+          />
+          <Modal
+            style={{ padding: "2em" }}
+            open={modalStates.ownReports}
+            onClose={() => setModalStates({ ...modalStates, ownReports: false })}>
+            <Header content={`Reportes tomados por ${getName()}`} icon="clipboard list" attached />
+            <OwnReports />
+          </Modal>
           {userName === "admin" ? (
             <>
               <Button
