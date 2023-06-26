@@ -51,25 +51,25 @@ export default function ReportStats({ data, setStatusStats }) {
         header: { content: stats.asignado, style: style },
         description: { content: "Reportes asignados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(20,100,200,0.5)" },
-        key: "11",
+        key: "repstats1",
       },
       {
         header: { content: stats.pendiente, style: style },
         description: { content: "Reportes pendientes", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(200,200,0,0.6)" },
-        key: "12",
+        key: "repstats2",
       },
       {
         header: { content: stats.solucionado, style: style },
         description: { content: "Reportes solucionados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(5,100,10,0.5)" },
-        key: "15",
+        key: "repstats3",
       },
       {
         header: { content: stats.cerrado, style: style },
         description: { content: "Reportes cerrados", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(50,50,100,0.2)" },
-        key: "101",
+        key: "repstats4",
       },
       {
         header: {
@@ -78,7 +78,7 @@ export default function ReportStats({ data, setStatusStats }) {
         },
         description: { content: "Total", style: descStyle },
         style: { width: "10em", backgroundColor: "rgb(220,220,220,0.3)" },
-        key: "101",
+        key: "repstats5",
       },
     ];
   }
