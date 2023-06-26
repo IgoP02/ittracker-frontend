@@ -9,7 +9,9 @@ export default memo(function OwnReports() {
   const [error, setError] = useState();
   const [loading, setloading] = useState(true);
 
-  const boldFont = { fontWeight: "bold" };
+  const boldFont = { fontWeight: "bold", fontSize: "1.15em" };
+  const contentFont = { fontSize: "1.1em" };
+
   async function getReports(page, perpage) {
     try {
       const { data, status } = await AxiosAdmin.get("reports/own_reports", {
@@ -49,21 +51,21 @@ export default memo(function OwnReports() {
           <Segment.Group>
             <Segment.Group size="tiny" horizontal>
               <Segment color="red">
-                <span style={{ ...boldFont, fontSize: "1.1em" }}>Código: </span>
-                <span style={{ fontSize: "1.1em" }}>{rep.id}</span>
+                <span style={{ ...boldFont, fontSize: "1.25em" }}>Código: </span>
+                <span style={{ fontSize: "1.2em" }}>{rep.id}</span>
               </Segment>
               <Segment>
                 <span style={boldFont}>Departamento: </span>
-                {rep.department}
+                <span style={contentFont}>{rep.department}</span>
               </Segment>
               <Segment>
                 <span style={boldFont}>Tipo: </span>
-                {rep.type}
+                <span style={contentFont}>{rep.type}</span>
               </Segment>
             </Segment.Group>
             <Segment>
               <span style={boldFont}>Descripción: </span>
-              {rep.description}
+              <span style={contentFont}>{rep.description}</span>
             </Segment>
           </Segment.Group>
         );
