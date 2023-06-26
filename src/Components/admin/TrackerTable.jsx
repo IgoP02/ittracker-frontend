@@ -189,7 +189,7 @@ export default function TrackerTable() {
       <Segment basic style={{ margin: "auto", padding: "0.5em" }} textAlign="center">
         <TablePaginator size="tiny" key="tPagTop" />
       </Segment>
-      <div className="tableContainer" style={{ maxHeight: "35em", overflowY: "scroll" }}>
+      <div className="tableContainer">
         <Table selectable striped sortable color="grey">
           <Table.Header className="sticky">
             <SortableTHead columns={columns} handleSorting={handleSorting} />
