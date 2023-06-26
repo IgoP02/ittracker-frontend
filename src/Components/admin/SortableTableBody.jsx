@@ -22,6 +22,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
     if (getUserName() == "admin") {
       toast.error("Usuario de administrador no está habilitado para funciones de analista", {
         hideProgressBar: true,
+        autoClose: false,
       });
       return;
     }
