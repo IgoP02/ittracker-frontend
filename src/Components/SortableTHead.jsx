@@ -17,13 +17,9 @@ export default function SortableTHead({ columns, handleSorting }) {
     return (
       <Table.HeaderCell
         sorted={
-          key === "description"
-            ? null
-            : key === orderBy && order === "ascending"
-            ? "descending"
-            : "ascending"
+          !sortable ? null : key === orderBy && order === "ascending" ? "descending" : "ascending"
         }
-        content={label}
+        content={<span>{label}</span>}
         key={realKey}
         onClick={sortable ? () => handleSortingChange(key) : null}
       />
