@@ -1,19 +1,18 @@
-body {
-  height: auto;
-}
-
 .ui.table thead.sticky tr:first-child > th {
   position: sticky !important;
   top: 0em;
   z-index: 4;
+  border-top: 1.5px solid rgb(200, 200, 200);
+  height: 3.5em;
 }
 
 thead.sticky th.sorted {
   background-color: #f2f2f2 !important;
+  height: 4em;
 }
 
 table.ui.table {
-  height: 100vh;
+  box-sizing: border-box;
   scroll-snap-align: start;
   scroll-snap-stop: mandatory;
 }
@@ -25,6 +24,14 @@ table.ui.table {
   scroll-snap-align: center;
   scroll-snap-type: mandatory;
   scroll-snap-stop: always;
+}
+
+.ui.table tbody tr {
+  max-height: 4em;
+}
+
+.smallRow {
+  height: 3.5em;
 }
 
 /* table.ui.table {
