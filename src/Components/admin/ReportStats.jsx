@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Card, Loader, Message } from "semantic-ui-react";
+import { Card, Loader } from "semantic-ui-react";
 import fetchStats from "../utils/fetchStats";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 export default function ReportStats({ data, setStatusStats }) {

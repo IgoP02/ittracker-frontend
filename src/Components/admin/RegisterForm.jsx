@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Header, Input, Label, Message, Segment } from "semantic-ui-react";
 import { AxiosAdmin } from "../utils/axiosClients";
-import { getToken } from "../utils/manageLogin";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({ username: "", email: "", password: "", name: "" });
