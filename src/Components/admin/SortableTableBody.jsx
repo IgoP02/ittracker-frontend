@@ -55,7 +55,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
   const rows = useMemo(() => {
     return tableData.map((row, index) => {
       return (
-        <Table.Row key={`row_${index}`}>
+        <Table.Row key={`row_${index}`} className={tableData.length <= 5 ? "smallRow" : null}>
           {columns.map((column) => {
             const dayJsParsed = dayjs.utc(row[column.key]);
             return (
@@ -85,5 +85,22 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
       );
     });
   }, [tableData]);
-  return <Table.Body key="TrackerTableBody">{rows}</Table.Body>;
+
+  const EmptyBody = () => {
+    const emptyRow = columns.map((column, index) => (
+      <Table.Cell key={`${column.key}${index}`}>
+        {column.key == "description" ? (
+          <span style={{ fontSize: "2em", fontWeight: "bolder" }}>
+            No se han encontrado resultados
+          </span>
+        ) : (
+          ""
+        )}
+      </Table.Cell>
+    ));
+    return <Table.Row id="emptyrow">{emptyRow}</Table.Row>;
+  };
+  return (
+    <Table.Body key="TrackerTableBody">{tableData.length > 0 ? rows : <EmptyBody />}</Table.Body>
+  );
 }

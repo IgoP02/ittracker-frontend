@@ -1,38 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Table,
-  Grid,
-  Select,
-  Loader,
-  Segment,
-  Message,
-  Label,
-  Statistic,
-  Container,
-  Sticky,
-} from "semantic-ui-react";
+import { useEffect, useMemo, useState } from "react";
+import { Table, Grid, Select, Loader, Segment, Message, Label, Statistic } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
-import TrackerTableAssigneeFilter from "./TrackerTableAssigneeFilter";
+import TrackerTableFieldFilter from "./TrackerTableFieldFilter";
 import TrackerTableStatusFilters from "../TrackerTableStatusFilters";
 import TrackerTablePagination from "./TrackerTablePagination";
-import { createPortal } from "react-dom";
 
 export default function TrackerTable() {
   const [perPage, setPerPage] = useState(10);
-  const [filters, setFilters] = useState({ active: false, pending: false });
-  const [assignee, setAssignee] = useState("");
+  const [filters, setFilters] = useState({
+    active: false,
+    pending: false,
+    assignee: "",
+    department: "",
+  });
   const [tableData, setTableData] = useState();
   const [isLoading, setisLoading] = useState(true);
   const [error, setError] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState();
   const [total, setTotal] = useState(0);
-  const segmentRef = useRef();
 
-  const getData = async (currentPage, perPage, assignee) => {
+  const getData = async (currentPage, perPage, assignee, department) => {
     try {
       const { data } = await AxiosAdmin.get("/reports", {
         params: {
@@ -41,6 +32,7 @@ export default function TrackerTable() {
           active: filters.active,
           pending: filters.pending,
           assignee: assignee,
+          department: department,
         },
       });
 
@@ -63,7 +55,7 @@ export default function TrackerTable() {
   };
   useEffect(() => {
     if (!tableData && !error) {
-      getData(currentPage, perPage, assignee);
+      getData(currentPage, perPage, filters.assignee, filters.department);
     } else if (tableData) {
       setisLoading(false);
     }
@@ -71,7 +63,7 @@ export default function TrackerTable() {
 
   useEffect(() => {
     console.log(currentPage);
-    getData(currentPage, perPage, assignee);
+    getData(currentPage, perPage, filters.assignee, filters.department);
   }, [currentPage, perPage, filters]);
 
   const columns = useMemo(
@@ -93,13 +85,15 @@ export default function TrackerTable() {
     setFilters((oldFilters) => ({ ...filters, [d.id]: !oldFilters[d.id] }));
   };
 
-  const handleAssigneeSearch = (assignee) => {
-    getData(currentPage, perPage, assignee);
+  const handleFieldSearch = (assignee, department) => {
+    if (assignee) setFilters({ ...filters, assignee: assignee });
+    if (department) setFilters({ ...filters, department: department });
+
+    getData(currentPage, perPage, assignee, department);
   };
 
-  const handleClearAssignee = () => {
-    setAssignee("");
-    getData(currentPage, perPage, "");
+  const handleClearField = () => {
+    getData(currentPage, perPage, "", "");
   };
   const handlePageCount = (e, d) => {
     setPerPage(d.value);
@@ -171,15 +165,15 @@ export default function TrackerTable() {
           <Label
             style={{ border: "none", paddingRight: "0.5em", fontWeight: "normal" }}
             basic
-            size="large">
+            size="medium">
             Reportes por página
           </Label>
         </Segment>
         <TrackerTableStatusFilters filters={filters} handleFilterChange={handleFilterChange} />
         <Segment basic>
-          <TrackerTableAssigneeFilter
-            handleAssigneeSearch={handleAssigneeSearch}
-            handleClearAssignee={handleClearAssignee}
+          <TrackerTableFieldFilter
+            handleFieldSearch={handleFieldSearch}
+            handleClearField={handleClearField}
           />
         </Segment>
         <Segment>
