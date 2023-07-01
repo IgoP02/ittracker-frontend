@@ -26,6 +26,8 @@ export default function Dashboard() {
   const userName = getUserName();
   const [MessageData, setMessageData] = useState();
   const [errors, setErrors] = useState({});
+  const [openSelects, setOpenSelects] = useState({ doughSelect: false, barSelect: false });
+
   const barChartRef = useRef();
   const doughChartRef = useRef();
 
@@ -122,13 +124,11 @@ export default function Dashboard() {
                 Reportes Semanales por
                 <ChartSelector
                   field={chartFields.doughChart}
-                  attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
+                  attributes={{ compact: !openSelects.doughSelect, style: { marginLeft: "0.5em" } }}
                   options={chartSelectorOptions}
+                  onOpen={() => setOpenSelects({ ...openSelects, doughSelect: true })}
+                  onClose={() => setOpenSelects({ ...openSelects, doughSelect: false })}
                   onChange={(e, d) => {
-                    console.log("chartfield ", chartFields.doughChart);
-
-                    console.log("texto ", d.text);
-                    console.log("value ", d.value);
                     setChartFields({ ...chartFields, doughChart: d.value });
                     console.log("chartfield ", chartFields.doughChart);
                   }}
@@ -147,8 +147,10 @@ export default function Dashboard() {
                 <ChartSelector
                   field={chartFields.barChart}
                   placeholder=""
-                  attributes={{ compact: true, style: { marginLeft: "0.5em" } }}
+                  attributes={{ compact: !openSelects.barSelect, style: { marginLeft: "0.5em" } }}
                   options={chartSelectorOptions}
+                  onOpen={() => setOpenSelects({ ...openSelects, doughSelect: true })}
+                  onClose={() => setOpenSelects({ ...openSelects, doughSelect: false })}
                   onChange={(e, d) => {
                     console.log(d);
 
