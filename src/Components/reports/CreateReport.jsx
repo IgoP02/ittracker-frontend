@@ -40,9 +40,6 @@ export default function CreateReport() {
       getFields();
     } else if (departments && issues && issueTypes) {
       setisLoading(false);
-      console.log("deps", departments);
-      console.log("types", issueTypes);
-      console.log("iss", issues);
     }
   }, [departments, issueTypes, issues]);
 

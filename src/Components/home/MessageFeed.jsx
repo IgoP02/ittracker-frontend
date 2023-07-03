@@ -12,7 +12,6 @@ export default function MessageFeed() {
   const fetchMessages = async () => {
     try {
       const { data, status } = await axiosApi.get("/messages");
-      console.log(data);
       setMessages(data);
     } catch (error) {
       if (error.response) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Form as RouterForm, useNavigate } from "react-router-dom";
-import { Form, Grid, Message, Select, TextArea } from "semantic-ui-react";
+import { Form, Grid, Icon, Message, Select, TextArea } from "semantic-ui-react";
 import { axiosApi } from "../utils/axiosClients";
 
 export default function CreateReportForm({ departments, issueTypes, issues, setError, error }) {
@@ -14,6 +14,12 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
   const [selectedType, setSelectedType] = useState({ id: 1 });
   const [filteredIssues, setFilteredIssues] = useState();
   const [submitAttempt, setSubmitAttempt] = useState(false);
+  const [errors, setErrors] = useState({
+    department: false,
+    type: false,
+    issue_type: false,
+    submit: false,
+  });
 
   console.log("dep len", departments.length);
   console.log("issue len", issueTypes.length);
@@ -43,15 +49,14 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
     if (d.id == "issue_type") {
       setSelectedType(issueTypes.find((type) => type.id == d.value.id));
     }
-    /* if (d.id == "issue_type" && d.value.id == 6) {
-      setFormData({ ...formData, issue: "Otros" });
-      console.log("Otros");
-    } */
+    if (!d.value) setErrors({ ...errors, [d.id]: true });
+    else setErrors({ ...errors, [d.id]: false });
   }
 
   async function handleSubmit(e, d) {
-    console.log("form", formData);
     setSubmitAttempt(true);
+    if (formData) {
+    }
     const { department, issue, issue_type, description } = formData;
     const reqdata = {
       department: department.id,
@@ -86,56 +91,75 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
   return (
     <Form size="large" as={RouterForm}>
       <Grid stackable style={{ marginTop: "1em" }}>
+        <p>
+          <span>Campos identificados con </span>
+          <Icon name="asterisk" size="small" color="red"></Icon>
+          <span>son requeridos</span>
+        </p>
         <Grid.Row>
           <Grid.Column width={8}>
             <Form.Field
+              label={{
+                children: "Departamento",
+                style: { fontSize: "18px", fontWeight: "bold", marginBottom: "1em" },
+              }}
+              required={true}
               error={
                 formData.department == "" && submitAttempt
-                  ? { content: "Departamento requerido", ponting: "below" }
+                  ? { content: "Debe especificar su departamento", ponting: "below" }
                   : null
-              }>
-              <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
-                Departamento
-              </label>
-
-              <Select
-                placeholder="Pick a Department"
-                options={dataToOptions(departments)}
-                value={formData.department}
-                id="department"
-                onChange={handleChange}
-              />
-            </Form.Field>
+              }
+              placeholder="Pick a Department"
+              options={dataToOptions(departments)}
+              value={formData.department}
+              id="department"
+              control={Select}
+              onChange={handleChange}></Form.Field>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row columns={2}>
           <Grid.Column>
-            <Form.Field id="issue_type">
-              <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
-                Tipo de Avería
-              </label>
-
-              <Select
-                placeholder="¿Qué tipo de problema presenta?"
-                options={dataToOptions(issueTypes)}
-                value={formData.issue_type}
-                onChange={handleChange}
-                id="issue_type"
-                error={
-                  formData.issue_type == "" && submitAttempt
-                    ? { content: "Tipo de avería requerido", ponting: "below" }
-                    : null
-                }
-              />
-            </Form.Field>
+            <Form.Field
+              required={true}
+              placeholder="¿Qué tipo de problema presenta?"
+              label={{
+                children: "Tipo de Avería",
+                style: { fontSize: "18px", fontWeight: "bold", marginBottom: "1em" },
+              }}
+              control={Select}
+              options={dataToOptions(issueTypes)}
+              value={formData.issue_type}
+              onChange={handleChange}
+              id="issue_type"
+              error={
+                formData.issue_type == "" && submitAttempt
+                  ? { content: "Debe seleccionar un tipo de avería", ponting: "below" }
+                  : null
+              }></Form.Field>
           </Grid.Column>
           <Grid.Column>
-            <Form.Field>
-              <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
+            <Form.Field
+              label={{
+                children: "Avería",
+                style: { fontSize: "18px", fontWeight: "bold", marginBottom: "1em" },
+              }}
+              placeholder="¿Cuál es el problema?"
+              options={filteredIssues ? dataToOptions(filteredIssues) : null}
+              value={formData.issue}
+              onChange={handleChange}
+              id="issue"
+              error={
+                formData.issue == "" && submitAttempt
+                  ? { content: "Especificar la avería observada", ponting: "below" }
+                  : null
+              }
+              required={true}
+              control={Select}>
+              {/* <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
                 Problema Observado
-              </label>
+              </label> */}
 
-              <Select
+              {/*  <Select
                 placeholder="¿Cuál es el problema?"
                 options={filteredIssues ? dataToOptions(filteredIssues) : null}
                 value={formData.issue}
@@ -146,13 +170,13 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
                     ? { content: "Avería requerida", ponting: "below" }
                     : null
                 }
-              />
+              /> */}
             </Form.Field>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
-            <Form.Field>
+            <Form.Field error={errors.description ? "Campo requerido" : false}>
               <label style={{ fontSize: "15px", fontWeight: "bold" }}>Descripción</label>
               <TextArea
                 rows={6}
@@ -170,9 +194,9 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
               <Message.Header icon="warning" content="Ha ocurrido un error" />
               <Message.Content>
                 {error
-                  ? error > 400
-                    ? "Algo ha salido mal, intente más tarde"
-                    : error.includes("Network")
+                  ? error >= 422
+                    ? "Algo ha salido mal. Verifique que ningún campos requerido esté vacío."
+                    : error.includes("Network") || error == 404
                     ? "El servidor no está disponible"
                     : null
                   : null}

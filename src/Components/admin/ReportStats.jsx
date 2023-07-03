@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Card, Loader } from "semantic-ui-react";
+import { Card, Loader, Message } from "semantic-ui-react";
 import fetchStats from "../utils/fetchStats";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 export default function ReportStats({ data, setStatusStats }) {
@@ -8,6 +8,7 @@ export default function ReportStats({ data, setStatusStats }) {
   const descStyle = { fontSize: "20px", textAlign: "center" };
 
   const [stats, setStats] = useState();
+  const [error, setError] = useState();
   const [isLoading, setisLoading] = useState(true);
 
   const getPerStats = async () => {
@@ -23,24 +24,26 @@ export default function ReportStats({ data, setStatusStats }) {
           autoClose: false,
         });
       }
+      setError(true);
       console.log("failed");
     }
     console.log(stats);
   };
   useEffect(() => {
-    var intervalID = setInterval(() => {
-      getPerStats();
-    }, 6000);
-    return () => {
-      clearInterval(intervalID);
-    };
+    if (error) {
+      var intervalID = setInterval(() => {
+        getPerStats();
+      }, 6000);
+      return () => {
+        clearInterval(intervalID);
+      };
+    }
   }, []);
 
   useEffect(() => {
-    if (!stats) {
+    if (!stats && !error) {
       getPerStats();
-    } else if (stats != null && stats != "Network Error") {
-      console.log(stats.asignado);
+    } else if (stats != null && (stats != "Network Error" || error)) {
       setisLoading(false);
     }
   }, [stats]);
@@ -81,6 +84,9 @@ export default function ReportStats({ data, setStatusStats }) {
         key: "repstats5",
       },
     ];
+  }
+  if (error) {
+    return <Message error content="Algo ha salido mal" />;
   }
   if (isLoading) {
     return (

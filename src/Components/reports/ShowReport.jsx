@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
+import { Button, Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
 import { LoginContext } from "../../main";
 import StatusSelector from "../admin/StatusSelector";
 import { CustomPara } from "../general_components/CustomPara";
@@ -12,7 +12,8 @@ export default function ShowReport() {
   const [loggedIn] = useContext(LoginContext);
   const { id } = useParams();
   const [isloading, setIsLoading] = useState(true);
-  const [error, setError] = useState();
+  const [httpError, setHttpError] = useState(false);
+
   const [report, setReport] = useState();
 
   const statuses = {
@@ -21,17 +22,20 @@ export default function ShowReport() {
     P: { name: "Pendiente", color: "200,200,0" },
     S: { name: "Solucionado", color: "50,50,100" },
   };
-  const handleResponseErrors = (error, set = false) => {
-    if (error.response) {
-      toast.error(getStatusDisplayMessage(error.response.status), { position: "top-center" });
-      console.log(error.response.status);
-      set ? setError(error.response.status) : null;
-    } else if (error.message) {
-      toast.error(getStatusDisplayMessage(error.message), { position: "top-center" });
-      set ? setError(error.message) : null;
+  const handleResponseErrors = (error, first = true) => {
+    if (!first) {
+      if (error.response) {
+        toast.error(getStatusDisplayMessage(error.response.status), { position: "top-center" });
+      } else if (error.message) {
+        toast.error(getStatusDisplayMessage(error.message), {
+          position: "top-center",
+          autoClose: false,
+        });
+      }
     }
+    if (error.response.status > 400) setHttpError(true);
   };
-  const fetchReport = async () => {
+  const fetchReport = async (first = true) => {
     try {
       const { data, status } = await axiosApi.get(`/reports/get/${id}`);
       console.log(data);
@@ -46,7 +50,7 @@ export default function ShowReport() {
         description: data.description,
       });
     } catch (error) {
-      handleResponseErrors(error, true);
+      handleResponseErrors(error, first);
     }
   };
 
@@ -57,24 +61,30 @@ export default function ShowReport() {
           status: newStatus,
         },
       });
-      status == 200 ? setReport({ ...report, status: newStatus, assignee: data.assignee }) : null;
+      let newAssignee = newStatus == "P" ? "NA" : data.assignee;
+      status == 200 ? setReport({ ...report, status: newStatus, assignee: newAssignee }) : null;
+      console.log(data.assignee);
       toast.success("Reporte actualizado");
     } catch (error) {
-      handleResponseErrors(error);
+      handleResponseErrors(error, false);
     }
   };
 
   useEffect(() => {
-    if (!report) {
+    if (!report && !httpError) {
       fetchReport();
-    } else if (report) {
+    } else if (report || httpError) {
       console.log(report);
       setIsLoading(false);
     }
   }, [report]);
-  if (error >= 404) {
+  if (httpError) {
     return (
-      <Message size="large" error content="No se encontró un reporte con este código" visible />
+      <div style={{ padding: "10em", textAlign: "center" }}>
+        <Message size="massive" error content="No se encontró un reporte con este código" visible />
+
+        <Button size="large" as={Link} to="/" icon="arrow left" content="Regresar" basic />
+      </div>
     );
   }
   if (isloading) {

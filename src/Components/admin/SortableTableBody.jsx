@@ -74,7 +74,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
                 ) : column.key == "date" ? (
                   `${dayJsParsed
                     .tz("America/Caracas")
-                    .format("D-MM-YYYY[,] hh:mm A")} (${dayJsParsed.locale("es").fromNow()})`
+                    .format("DD-MM-YYYY[,] hh:mm A")} (${dayJsParsed.locale("es").fromNow()})`
                 ) : (
                   row[column.key]
                 )}

@@ -1,4 +1,4 @@
-import { Button, Grid, Header, Icon, Label, Modal, Segment } from "semantic-ui-react";
+import { Button, Container, Grid, Header, Icon, Label, Modal, Segment } from "semantic-ui-react";
 import StatsBarChart from "./charts/StatsBarChart";
 import StatsDoughChart from "./charts/StatsDoughChart";
 import MessageForm from "./MessageForm";
@@ -17,7 +17,7 @@ import OwnReports from "./OwnReports";
 
 export default function Dashboard() {
   const [chartFields, setChartFields] = useState({ doughChart: "type", barChart: "department" });
-  const [loggedIn, setLoggedIn] = useContext(LoginContext);
+  const [loggedIn] = useContext(LoginContext);
   const [modalStates, setModalStates] = useState({
     registerForm: false,
     MaintenanceMenu: false,
@@ -89,14 +89,16 @@ export default function Dashboard() {
     }
   }, [MessageData]);
   useEffect(() => {
-    if (!MessageData) {
-      getMessage();
-    } else {
-      console.log("MessageData", MessageData);
+    if (loggedIn) {
+      if (!MessageData) {
+        getMessage();
+      } else {
+        console.log("MessageData", MessageData);
+      }
+      return () => {
+        setModalStates({ registerForm: false, MaintenanceMenu: false, ownReports: false });
+      };
     }
-    return () => {
-      setModalStates({ registerForm: false, MaintenanceMenu: false, ownReports: false });
-    };
   }, [MessageData]);
 
   const labelStyle = {
@@ -105,161 +107,172 @@ export default function Dashboard() {
   };
   const rowPadding = { padding: "0" };
 
-  if (loggedIn == false) {
+  if (!loggedIn) {
     return;
   }
 
   return (
-    <Grid relaxed centered stackable columns="equal">
-      <Grid.Row style={{ padding: "5px" }}>
-        <Grid.Column>
-          <ReportStats setStatusStats={setStatusStats} />
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row columns={1} style={{ ...rowPadding }}>
-        <Grid.Column>
-          <Segment.Group horizontal>
-            <Segment size="tiny" style={{ height: "400px", width: "400px" }} textAlign="center">
-              <Label style={labelStyle} attached="top">
-                Reportes Semanales por
-                <ChartSelector
-                  field={chartFields.doughChart}
-                  attributes={{ compact: !openSelects.doughSelect, style: { marginLeft: "0.5em" } }}
-                  options={chartSelectorOptions}
-                  onOpen={() => setOpenSelects({ ...openSelects, doughSelect: true })}
-                  onClose={() => setOpenSelects({ ...openSelects, doughSelect: false })}
-                  onChange={(e, d) => {
-                    setChartFields({ ...chartFields, doughChart: d.value });
-                    console.log("chartfield ", chartFields.doughChart);
-                  }}
+    <Container>
+      <Grid centered stackable columns="equal">
+        <Grid.Row style={{ padding: "5px" }}>
+          <Grid.Column>
+            <ReportStats setStatusStats={setStatusStats} />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row columns={1} style={{ ...rowPadding }}>
+          <Grid.Column>
+            <Segment.Group horizontal>
+              <Segment size="tiny" style={{ height: "400px", width: "400px" }} textAlign="center">
+                <Label style={labelStyle} attached="top">
+                  Reportes Semanales por
+                  <ChartSelector
+                    field={chartFields.doughChart}
+                    attributes={{
+                      compact: !openSelects.doughSelect,
+                      style: { marginLeft: "0.5em" },
+                    }}
+                    options={chartSelectorOptions}
+                    onOpen={() => setOpenSelects({ ...openSelects, doughSelect: true })}
+                    onClose={() => setOpenSelects({ ...openSelects, doughSelect: false })}
+                    onChange={(e, d) => {
+                      setChartFields({ ...chartFields, doughChart: d.value });
+                      console.log("chartfield ", chartFields.doughChart);
+                    }}
+                  />
+                </Label>
+                <StatsDoughChart
+                  ref={doughChartRef}
+                  attributes={{ style: { paddingTop: "1.5em" } }}
+                  style={{ paddingTop: "0.5em" }}
+                  doughField={chartFields.doughChart}
                 />
-              </Label>
-              <StatsDoughChart
-                ref={doughChartRef}
-                attributes={{ style: { paddingTop: "1.5em" } }}
-                style={{ paddingTop: "0.5em" }}
-                doughField={chartFields.doughChart}
-              />
-            </Segment>
-            <Segment style={{ height: "400px", width: "600px" }} textAlign="center">
-              <Label style={labelStyle} attached="top">
-                Reportes Activos por
-                <ChartSelector
-                  field={chartFields.barChart}
-                  placeholder=""
-                  attributes={{ compact: !openSelects.barSelect, style: { marginLeft: "0.5em" } }}
-                  options={chartSelectorOptions}
-                  onOpen={() => setOpenSelects({ ...openSelects, doughSelect: true })}
-                  onClose={() => setOpenSelects({ ...openSelects, doughSelect: false })}
-                  onChange={(e, d) => {
-                    console.log(d);
+              </Segment>
+              <Segment style={{ height: "400px", width: "600px" }} textAlign="center">
+                <Label style={labelStyle} attached="top">
+                  Reportes Activos por
+                  <ChartSelector
+                    field={chartFields.barChart}
+                    placeholder=""
+                    attributes={{ compact: !openSelects.barSelect, style: { marginLeft: "0.5em" } }}
+                    options={chartSelectorOptions}
+                    onOpen={() => setOpenSelects({ ...openSelects, doughSelect: true })}
+                    onClose={() => setOpenSelects({ ...openSelects, doughSelect: false })}
+                    onChange={(e, d) => {
+                      console.log(d);
 
-                    setChartFields({ ...chartFields, barChart: d.value });
-                  }}
+                      setChartFields({ ...chartFields, barChart: d.value });
+                    }}
+                  />
+                </Label>
+                <StatsBarChart
+                  ref={barChartRef}
+                  attributes={{ style: { paddingTop: "1.5em" } }}
+                  barField={chartFields.barChart}
                 />
-              </Label>
-              <StatsBarChart
-                ref={barChartRef}
-                attributes={{ style: { paddingTop: "1.5em" } }}
-                barField={chartFields.barChart}
+              </Segment>
+            </Segment.Group>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={8}>
+            <PDFGenerator
+              barChartRef={barChartRef}
+              doughChartRef={doughChartRef}
+              statusStats={statusStats}
+              fields={chartFields}
+            />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row columns={1}>
+          <Grid.Column textAlign="center" width={8}>
+            <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
+            <Button
+              style={{ padding: "10px" }}
+              content={
+                <span>
+                  <Icon name="clipboard list" size="large" /> <Icon name="user" size="large" />{" "}
+                  Reportes Tomados
+                </span>
+              }
+              color="green"
+              fluid
+              size="huge"
+              onClick={() => setModalStates({ ...modalStates, ownReports: true })}
+            />
+            <Modal
+              style={{ padding: "2em" }}
+              open={modalStates.ownReports}
+              onClose={() => setModalStates({ ...modalStates, ownReports: false })}>
+              <Header
+                content={`Reportes tomados por ${getName()}`}
+                icon="clipboard list"
+                attached
               />
-            </Segment>
-          </Segment.Group>
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column width={8}>
-          <PDFGenerator
-            barChartRef={barChartRef}
-            doughChartRef={doughChartRef}
-            statusStats={statusStats}
-            fields={chartFields}
-          />
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row columns={1}>
-        <Grid.Column textAlign="center">
-          <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
-          <Button
-            content={
-              <span>
-                <Icon name="clipboard list" size="large" /> <Icon name="user" size="large" />{" "}
-                Reportes Tomados
-              </span>
-            }
-            color="green"
-            fluid
-            size="huge"
-            onClick={() => setModalStates({ ...modalStates, ownReports: true })}
-          />
-          <Modal
-            style={{ padding: "2em" }}
-            open={modalStates.ownReports}
-            onClose={() => setModalStates({ ...modalStates, ownReports: false })}>
-            <Header content={`Reportes tomados por ${getName()}`} icon="clipboard list" attached />
-            <OwnReports />
-          </Modal>
-          {userName === "admin" ? (
-            <>
-              <Button
-                active={true}
-                fluid
-                size="huge"
-                color="red"
-                icon="eraser"
-                content="Limpieza de Reportes"
-                onClick={() => setModalStates({ ...modalStates, MaintenanceMenu: true })}
-              />
-              <Modal
-                open={modalStates.MaintenanceMenu}
-                onClose={() => setModalStates({ ...modalStates, MaintenanceMenu: false })}>
-                <MaintenanceMenu />
-              </Modal>
-            </>
-          ) : null}
-          {userName == "admin" ? (
-            <>
-              <Grid.Column textAlign="center">
+              <OwnReports />
+            </Modal>
+            {userName === "admin" ? (
+              <>
                 <Button
+                  style={{ marginTop: "5px", marginButton: "5px" }}
                   active={true}
-                  style={{ transition: "2000ms" }}
                   fluid
                   size="huge"
-                  color="blue"
-                  icon="add user"
-                  content="Registro de Analistas"
-                  onClick={() => setModalStates({ ...modalStates, registerForm: true })}
-                />
-              </Grid.Column>
-
-              <Modal
-                open={modalStates.registerForm}
-                onClose={() => setModalStates({ ...modalStates, registerForm: false })}>
-                <Header
-                  icon="add user"
-                  content="Registro de Analistas"
                   color="red"
-                  attached="top"
+                  icon="eraser"
+                  content="Limpieza de Reportes"
+                  onClick={() => setModalStates({ ...modalStates, MaintenanceMenu: true })}
                 />
-                <RegisterForm />
-              </Modal>
-            </>
-          ) : null}
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row style={rowPadding}>
-        <Grid.Column width={10}>
-          <Segment>
-            <MessageForm labelStyle={labelStyle} setLatestMessageData={setMessageData} />
-          </Segment>
-          <Grid.Row textAlign="center" style={{ marginTop: "1em" }}></Grid.Row>
-        </Grid.Column>
-        <Grid.Column width={6}>
-          <Grid.Row>
-            <LatestMessage LatestMessageData={MessageData} removeMessage={clearMessage} />
-          </Grid.Row>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+                <Modal
+                  open={modalStates.MaintenanceMenu}
+                  onClose={() => setModalStates({ ...modalStates, MaintenanceMenu: false })}>
+                  <MaintenanceMenu />
+                </Modal>
+              </>
+            ) : null}
+            {userName == "admin" ? (
+              <>
+                <Grid.Column textAlign="center">
+                  <Button
+                    active={true}
+                    style={{ marginTop: "5px", marginButton: "5px" }}
+                    fluid
+                    size="huge"
+                    color="blue"
+                    icon="add user"
+                    content="Registro de Analistas"
+                    onClick={() => setModalStates({ ...modalStates, registerForm: true })}
+                  />
+                </Grid.Column>
+
+                <Modal
+                  open={modalStates.registerForm}
+                  onClose={() => setModalStates({ ...modalStates, registerForm: false })}>
+                  <Header
+                    icon="add user"
+                    content="Registro de Analistas"
+                    color="red"
+                    attached="top"
+                  />
+                  <RegisterForm />
+                </Modal>
+              </>
+            ) : null}
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row style={rowPadding}>
+          <Grid.Column width={10}>
+            <Segment>
+              <MessageForm labelStyle={labelStyle} setLatestMessageData={setMessageData} />
+            </Segment>
+            <Grid.Row textAlign="center" style={{ marginTop: "1em" }}></Grid.Row>
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Grid.Row>
+              <LatestMessage LatestMessageData={MessageData} removeMessage={clearMessage} />
+            </Grid.Row>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    </Container>
   );
 }
