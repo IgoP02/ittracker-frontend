@@ -39,11 +39,11 @@ function NavBar() {
         Accept: "Application/json",
       },
     });
-    setLoggedIn();
     removeUserName();
     removeName();
     removeLogged();
     deleteToken();
+    setLoggedIn(false);
     setActiveItem("home");
     navigate("/", true);
   }
@@ -51,7 +51,7 @@ function NavBar() {
     setIsModalOpen(true);
   }
   const UserGreeting = () => {
-    if (loggedIn) {
+    if (loggedIn.logged) {
       const message =
         loggedIn.username != "admin" && loggedIn.name ? (
           <>
@@ -62,7 +62,9 @@ function NavBar() {
         );
       return (
         <Menu.Item name="loggedUser">
-          <p style={{ fontSize: "1.1em" }}>{message}</p>
+          <p id="greeting" style={{ fontSize: "1.1em" }}>
+            {message}
+          </p>
         </Menu.Item>
       );
     }
@@ -74,7 +76,7 @@ function NavBar() {
         <Container>
           <Menu.Item header>
             <Image size="mini" src={logo} />
-            <b>ITTracker</b>
+            <b id="logoText">ITTracker</b>
           </Menu.Item>
           <Menu.Item
             name="home"
@@ -85,9 +87,9 @@ function NavBar() {
             Inicio
           </Menu.Item>
           <Menu.Item
-            disabled={!loggedIn}
+            disabled={!loggedIn.logged}
             name="admin"
-            to={loggedIn && "admin"}
+            to={loggedIn.logged && "admin"}
             active={activeItem === "admin"}
             as={Link}
             onClick={handleItemClick}>
@@ -96,11 +98,11 @@ function NavBar() {
           <Menu.Item name="logItem" style={{ marginRight: "1em" }} position="right">
             <Button
               name="logItem"
-              icon={loggedIn ? { name: "sign out", size: "large" } : null}
-              content={loggedIn ? "Cerrar Sesión" : "Iniciar Sesión"}
-              color={loggedIn ? "red" : "blue"}
+              icon={loggedIn.logged ? { name: "sign out", size: "large" } : null}
+              content={loggedIn.logged ? "Cerrar Sesión" : "Iniciar Sesión"}
+              color={loggedIn.logged ? "red" : "blue"}
               style={{ borderRadius: "2px" }}
-              onClick={loggedIn ? handleLogOut : toggleModal}
+              onClick={loggedIn.logged ? handleLogOut : toggleModal}
             />
           </Menu.Item>
           {<UserGreeting />}

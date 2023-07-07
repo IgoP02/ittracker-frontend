@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { Table, Grid, Select, Loader, Segment, Message, Label, Statistic } from "semantic-ui-react";
+import {
+  Table,
+  Grid,
+  Select,
+  Loader,
+  Segment,
+  Message,
+  Label,
+  Statistic,
+  Container,
+} from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
@@ -150,52 +160,77 @@ export default function TrackerTable() {
       />
     );
   };
-
+  const widescreenToolbar = (tablet = false) => (
+    <Segment.Group horizontal size="tiny">
+      <Segment basic>
+        <Select
+          defaultValue={20}
+          compact
+          options={displayRowOptions(5)}
+          onChange={handlePageCount}
+        />
+        <Label style={{ border: "none", fontWeight: "normal" }} basic size="medium">
+          {tablet ? "" : "Reportes por página"}
+        </Label>
+      </Segment>
+      <TrackerTableStatusFilters filters={filters} handleFilterChange={handleFilterChange} />
+      <Segment basic>
+        <TrackerTableFieldFilter
+          handleFieldSearch={handleFieldSearch}
+          handleClearField={handleClearField}
+        />
+      </Segment>
+      <Segment>
+        <Statistic label="Total" value={total} size="tiny" />
+      </Segment>
+    </Segment.Group>
+  );
   return (
-    <>
-      <Segment.Group horizontal>
-        <Segment basic>
-          <Select
-            style={{ marginLeft: "2em" }}
-            defaultValue={20}
-            compact
-            options={displayRowOptions(5)}
-            onChange={handlePageCount}
-          />
-          <Label
-            style={{ border: "none", paddingRight: "0.5em", fontWeight: "normal" }}
-            basic
-            size="medium">
-            Reportes por página
-          </Label>
+    <Container>
+      <Grid>
+        <Grid.Row only="mobile" columns={1}>
+          <Grid.Column>
+            <Segment basic>
+              <TrackerTableFieldFilter
+                handleFieldSearch={handleFieldSearch}
+                handleClearField={handleClearField}
+              />
+            </Segment>
+          </Grid.Column>
+          <Grid.Column>
+            <Segment basic>
+              <TrackerTableStatusFilters
+                filters={filters}
+                handleFilterChange={handleFilterChange}
+              />
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row only="computer">{widescreenToolbar()}</Grid.Row>
+        <Grid.Row only="tablet">{widescreenToolbar(true)}</Grid.Row>
+        <Segment basic style={{ margin: "auto", padding: "0.5em" }} textAlign="center">
+          <TablePaginator size="tiny" key="tPagTop" />
         </Segment>
-        <TrackerTableStatusFilters filters={filters} handleFilterChange={handleFilterChange} />
-        <Segment basic>
-          <TrackerTableFieldFilter
-            handleFieldSearch={handleFieldSearch}
-            handleClearField={handleClearField}
-          />
-        </Segment>
-        <Segment>
-          <Statistic label="Total" value={total} size="tiny" />
-        </Segment>
-      </Segment.Group>
-      <Segment basic style={{ margin: "auto", padding: "0.5em" }} textAlign="center">
-        <TablePaginator size="tiny" key="tPagTop" />
-      </Segment>
-      <div className="tableContainer">
-        <Table selectable striped sortable color="grey">
-          <Table.Header className="sticky">
-            <SortableTHead columns={columns} handleSorting={handleSorting} />
-          </Table.Header>
+        <Container className="tableContainer">
+          <Table selectable striped sortable color="grey" className="responsiveTrackerTable">
+            <Table.Header className="sticky">
+              <SortableTHead columns={columns} handleSorting={handleSorting} />
+            </Table.Header>
 
-          <SortableTableBody columns={columns} tableData={tableData} setTableData={setTableData} />
-        </Table>
-      </div>
-      <Segment basic style={{ margin: "auto", padding: "0" }} textAlign="center">
-        <TablePaginator key="tPagBottom" />
-      </Segment>
-    </>
+            <SortableTableBody
+              columns={columns}
+              tableData={tableData}
+              setTableData={setTableData}
+            />
+          </Table>
+        </Container>
+        <Grid.Column only="computer" textAlign="center" width={16}>
+          <Segment basic style={{ margin: "auto", padding: "0" }} textAlign="center">
+            <TablePaginator key="tPagBottom" />
+          </Segment>
+        </Grid.Column>
+      </Grid>
+    </Container>
   );
 }
 

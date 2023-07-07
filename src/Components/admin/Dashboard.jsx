@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Button, Container, Grid, Header, Icon, Label, Modal, Segment } from "semantic-ui-react";
 import StatsBarChart from "./charts/StatsBarChart";
 import StatsDoughChart from "./charts/StatsDoughChart";
@@ -5,7 +6,7 @@ import MessageForm from "./MessageForm";
 import ReportStats from "./ReportStats";
 import ChartSelector from "../ChartSelector";
 import RegisterForm from "./RegisterForm";
-import { getName, getUserName } from "../utils/manageLogin";
+import { getName, getUserName, logOut } from "../utils/manageLogin";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { LoginContext } from "../../main";
 import LatestMessage from "../LatestMessage";
@@ -14,14 +15,18 @@ import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
 import MaintenanceMenu from "./MaintenanceMenu";
 import PDFGenerator from "./PDFGenerator";
 import OwnReports from "./OwnReports";
+import ServerActivityLog from "../ServerActivityLog";
+import axios from "axios";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [chartFields, setChartFields] = useState({ doughChart: "type", barChart: "department" });
   const [loggedIn] = useContext(LoginContext);
   const [modalStates, setModalStates] = useState({
     registerForm: false,
     MaintenanceMenu: false,
     ownReports: false,
+    activityLog: false,
   });
   const userName = getUserName();
   const [MessageData, setMessageData] = useState();
@@ -33,6 +38,7 @@ export default function Dashboard() {
 
   const [statusStats, setStatusStats] = useState();
 
+  let source = axios.CancelToken.source();
   const chartSelectorOptions = [
     {
       key: "deps",
@@ -64,9 +70,31 @@ export default function Dashboard() {
       value: "type",
     },
   ];
+  if (!loggedIn) return;
+
+  const checkUser = async () => {
+    const logOff = () => {
+      logOut();
+      return navigate("/");
+    };
+    try {
+      const { data, status } = await AxiosAdmin.get("/user");
+      if (status == 401) logOff();
+    } catch (error) {
+      if (error.response && error.response.status == 401) {
+        logOff();
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
   const getMessage = useCallback(async () => {
     try {
-      const { status, data } = await AxiosAdmin.get("/messages/latest");
+      const { status, data } = await AxiosAdmin.get("/messages/latest", {
+        cancelToken: source.token,
+      });
       setMessageData(data);
     } catch (error) {
       if (error.response) {
@@ -79,7 +107,7 @@ export default function Dashboard() {
   const clearMessage = useCallback(async () => {
     setMessageData();
     try {
-      const { status } = await AxiosAdmin.get("/messages/delete");
+      const { status } = await AxiosAdmin.get("/messages/delete", { cancelToken: source.token });
     } catch (error) {
       if (error.response) {
         setErrors({ ...errors, message: getStatusDisplayMessage(error.response.status) });
@@ -112,8 +140,8 @@ export default function Dashboard() {
   }
 
   return (
-    <Container>
-      <Grid centered stackable columns="equal">
+    <Container style={{ padding: "10px" }}>
+      <Grid centered stackable columns="equal" container>
         <Grid.Row style={{ padding: "5px" }}>
           <Grid.Column>
             <ReportStats setStatusStats={setStatusStats} />
@@ -121,7 +149,7 @@ export default function Dashboard() {
         </Grid.Row>
         <Grid.Row columns={1} style={{ ...rowPadding }}>
           <Grid.Column>
-            <Segment.Group horizontal>
+            <Segment.Group horizontal compact className="chartsContainer">
               <Segment size="tiny" style={{ height: "400px", width: "400px" }} textAlign="center">
                 <Label style={labelStyle} attached="top">
                   Reportes Semanales por
@@ -187,7 +215,7 @@ export default function Dashboard() {
           <Grid.Column textAlign="center" width={8}>
             <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
             <Button
-              style={{ padding: "10px" }}
+              style={{ padding: "10px", margin: "5px" }}
               content={
                 <span>
                   <Icon name="clipboard list" size="large" /> <Icon name="user" size="large" />{" "}
@@ -210,10 +238,30 @@ export default function Dashboard() {
               />
               <OwnReports />
             </Modal>
+            <Button
+              style={{ padding: "10px", margin: "5px" }}
+              content={
+                <span>
+                  <Icon name="server" size="large" /> <Icon name="list" size="large" /> Reportes de
+                  Actividad
+                </span>
+              }
+              color="grey"
+              fluid
+              size="huge"
+              onClick={() => setModalStates({ ...modalStates, activityLog: true })}
+            />
+            <Modal
+              style={{ padding: "2em" }}
+              open={modalStates.activityLog}
+              onClose={() => setModalStates({ ...modalStates, activityLog: false })}>
+              <Header content="Reportes de Actividad" icon="server" attached />
+              <ServerActivityLog />
+            </Modal>
             {userName === "admin" ? (
               <>
                 <Button
-                  style={{ marginTop: "5px", marginButton: "5px" }}
+                  style={{ padding: "10px", margin: "5px" }}
                   active={true}
                   fluid
                   size="huge"
@@ -227,14 +275,10 @@ export default function Dashboard() {
                   onClose={() => setModalStates({ ...modalStates, MaintenanceMenu: false })}>
                   <MaintenanceMenu />
                 </Modal>
-              </>
-            ) : null}
-            {userName == "admin" ? (
-              <>
                 <Grid.Column textAlign="center">
                   <Button
                     active={true}
-                    style={{ marginTop: "5px", marginButton: "5px" }}
+                    style={{ padding: "10px", margin: "5px" }}
                     fluid
                     size="huge"
                     color="blue"

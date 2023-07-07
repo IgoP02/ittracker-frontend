@@ -1,3 +1,14 @@
+@media only screen and (max-width: 768px) {
+  #greeting,
+  #logoText {
+    display: none;
+  }
+}
+
+.ui.table {
+  margin-right: 0;
+}
+
 .ui.table thead.sticky tr:first-child > th {
   position: sticky !important;
   top: 0em;
@@ -25,18 +36,96 @@ table.ui.table {
   scroll-snap-type: mandatory;
   scroll-snap-stop: always;
 }
-
-.ui.table tbody tr {
-  max-height: 4em;
+.modalContainer {
+  display: flex;
+}
+.modalContainer * {
+  flex-shrink: 1;
+}
+.chartContainer {
+  display: flex;
+}
+.chartdbox * {
+  flex-wrap: wrap;
 }
 
-.smallRow {
+.tableToolbar {
+  display: flex;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.tableToolbar * {
+  flex-wrap: wrap;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.formButton {
   height: 3.5em;
+  margin: auto;
 }
+/* @media only screen and (max-width: 767px) {
+  table.responsiveTrackerTable {
+    border: none !important;
+  }
 
-/* table.ui.table {
-  scroll-snap-type: mandatory;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  table.responsiveTrackerTable th,
+  table.responsiveTrackerTable td {
+    padding: 1em 0.5em;
+    position: relative;
+  }
+
+  table.responsiveTrackerTable tr,
+  table.responsiveTrackerTable td,
+  table.responsiveTrackerTable tfoot {
+    display: block !important;
+    width: 100%;
+  }
+
+  table.responsiveTrackerTable tbody tr {
+    border-top: 1px solid rgba(34, 36, 38, 0.1);
+  }
+
+  table.responsiveTrackerTable tfoot tr {
+    border: none !important;
+  }
+
+  table.responsiveTrackerTable td {
+    border-top: none !important;
+    border-left: none !important;
+  }
+
+  table.responsiveTrackerTable tbody tr {
+    margin: 20px, 20px;
+    padding: 0.25em 0;
+    border: 1px solid rgba(34, 36, 38, 0.2);
+  }
+
+  table.responsiveTrackerTable tbody tr:not(:last-child) {
+    margin-bottom: 0.25em;
+  }
+
+  table.responsiveTrackerTable thead {
+    display: none !important;
+  }
+
+  table.responsiveTrackerTable tbody td {
+    padding: 0.3em 0.5em 0.3em 7.5em !important;
+  }
+
+  .responsiveTrackerTable td:not(:last-child) {
+    border-bottom: 1px solid rgba(34, 36, 38, 0.1);
+  }
+
+  table.responsiveTrackerTable tbody td:before {
+    content: attr(data-label);
+    left: 0.5em;
+    position: absolute;
+    top: 0.15em;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 6em;
+    overflow: hidden;
+  }
 }
  */

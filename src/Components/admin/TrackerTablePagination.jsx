@@ -1,9 +1,15 @@
 import React from "react";
 import { Icon, Pagination } from "semantic-ui-react";
 
-export default function TrackerTablePagination({ size, lastPage, currentPage, handlePageChange }) {
+export default function TrackerTablePagination({
+  size = "medium",
+  lastPage,
+  currentPage,
+  handlePageChange,
+}) {
   return (
     <Pagination
+      className="stackable"
       ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
       firstItem={{ content: <Icon name="angle double left" />, icon: true }}
       lastItem={{ content: <Icon name="angle double right" />, icon: true }}

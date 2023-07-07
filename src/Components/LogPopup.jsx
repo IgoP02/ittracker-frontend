@@ -70,7 +70,7 @@ export default function LogPopup({ isOpen, setIsOpen }) {
       setUserName(data.username);
       setName(data?.name);
 
-      setLoggedIn({ username: data.username, name: data?.name });
+      setLoggedIn({ username: data.username, name: data?.name, logged: true });
       setLogged();
       setIsOpen(false);
     } catch (error) {

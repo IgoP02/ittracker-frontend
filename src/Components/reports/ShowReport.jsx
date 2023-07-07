@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Button, Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
+import { Button, Container, Grid, Header, Loader, Message, Segment } from "semantic-ui-react";
 import { LoginContext } from "../../main";
 import StatusSelector from "../admin/StatusSelector";
 import { CustomPara } from "../general_components/CustomPara";
@@ -116,11 +116,11 @@ export default function ShowReport() {
     }
   };
   return (
-    <>
-      <Grid centered textAlign="center" style={{ marginTop: "3em" }}>
+    <div className="tableContainer">
+      <Grid centered textAlign="center" style={{ marginTop: "3em", marginRight: "0" }}>
         <Grid.Row>
           <Grid.Column>
-            <Segment.Group size="large">
+            <Segment.Group size="medium">
               <Header
                 attached
                 content="Reporte"
@@ -152,27 +152,25 @@ export default function ShowReport() {
                   />
                 </Segment>
               </Segment.Group>
-              <Segment.Group compact horizontal style={{}}>
-                <Segment>
-                  <Header size="small">
-                    <CustomPara size={1.1} text="Departamento" opacity={0.79} />
-                  </Header>
-                  <CustomPara size={1} text={report.department} />
-                </Segment>
-                <Segment>
-                  <Header size="tiny">
-                    <CustomPara size={1.1} text="Tipo de Avería" opacity={0.79} />
-                  </Header>
-                  <CustomPara size={1} text={report.issue_type} />
-                </Segment>
-                <Segment>
-                  <Header size="tiny">
-                    <CustomPara size={1.1} text="Avería" opacity={0.79} />
-                  </Header>
-                  <CustomPara size={1} text={report.issue} />
-                </Segment>
-              </Segment.Group>
               <Segment>
+                <Header size="medium">
+                  <CustomPara size={1.3} text="Departamento" opacity={0.79} />
+                </Header>
+                <CustomPara size={1.2} text={report.department} />
+              </Segment>
+              <Segment>
+                <Header size="small">
+                  <CustomPara size={1.3} text="Tipo de Avería" opacity={0.79} />
+                </Header>
+                <CustomPara size={1.2} text={report.issue_type} />
+              </Segment>
+              <Segment>
+                <Header size="small">
+                  <CustomPara size={1.3} text="Avería" opacity={0.79} />
+                </Header>
+                <CustomPara size={1.2} text={report.issue} />
+              </Segment>
+              <Segment size="large">
                 <Header>
                   <CustomPara size={1.1} text="Descripción" opacity={0.79} />
                 </Header>
@@ -182,6 +180,6 @@ export default function ShowReport() {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-    </>
+    </div>
   );
 }

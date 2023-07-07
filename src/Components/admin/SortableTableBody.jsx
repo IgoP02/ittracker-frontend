@@ -60,6 +60,7 @@ export default function SortableTableBody({ columns, tableData, setTableData }) 
             const dayJsParsed = dayjs.utc(row[column.key]);
             return (
               <Table.Cell
+                data-label={column.label}
                 key={`${column.key}_${index}`}
                 style={column.key === "priority" ? priorityStyles[row.priority - 1] : null}>
                 {column.key === "status" ? (

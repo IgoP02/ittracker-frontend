@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Form as RouterForm, useNavigate } from "react-router-dom";
-import { Form, Grid, Icon, Message, Select, TextArea } from "semantic-ui-react";
+import { Button, Form, Grid, Icon, Message, Select, TextArea } from "semantic-ui-react";
 import { axiosApi } from "../utils/axiosClients";
 
 export default function CreateReportForm({ departments, issueTypes, issues, setError, error }) {
@@ -206,8 +206,15 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column>
-            <Form.Button color="red" content="Enviar" onClick={handleSubmit} />
+          <Grid.Column textAlign="center" width={10}>
+            <Button
+              color="red"
+              className="formButton"
+              content="Enviar"
+              size="large"
+              fluid
+              onClick={handleSubmit}
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>

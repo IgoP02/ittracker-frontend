@@ -66,7 +66,6 @@ export default function StatusSelector({
         handleStatusChange(capitalize(d.value), reportId);
       }
     }
-    //console.log("selected", selected);
   }
   if (isLoading) {
     return <p>Cargando</p>;

@@ -37,7 +37,8 @@ function removeLogged() {
  * @returns {boolean}
  */
 function isLogged() {
-  return Cookies.get("logged") ? true : false;
+  console.log(Cookies.get("logged"));
+  return Cookies.get("logged");
 }
 /**
  * set username to cookies
@@ -74,6 +75,15 @@ function removeName() {
 function setName(name) {
   localStorage.setItem("name", name);
 }
+/*
+ * Run all cookie clearing functions
+ */
+function logOut() {
+  removeLogged();
+  removeName();
+  removeUserName();
+  deleteToken();
+}
 
 export {
   setToken,
@@ -88,4 +98,5 @@ export {
   setName,
   getName,
   removeName,
+  logOut,
 };

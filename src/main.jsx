@@ -30,7 +30,7 @@ import {
 } from "chart.js";
 import dataLabelsPlugin from "chartjs-plugin-datalabels";
 import { ToastContainer } from "react-toastify";
-import { isLogged } from "./Components/utils/manageLogin";
+import { getName, getUserName, isLogged } from "./Components/utils/manageLogin";
 
 export const LoginContext = createContext();
 ChartJS.register(
@@ -43,7 +43,11 @@ ChartJS.register(
   dataLabelsPlugin
 );
 function Main() {
-  const [loggedIn, setLoggedIn] = useState();
+  const [loggedIn, setLoggedIn] = useState({
+    username: getUserName(),
+    name: getName(),
+    logged: isLogged(),
+  });
   const route = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<GlobalLayout />}>
