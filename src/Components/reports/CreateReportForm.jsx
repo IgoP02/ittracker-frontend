@@ -25,7 +25,6 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
   console.log("issue len", issueTypes.length);
   console.log("issuetype len", issues.length);
 
-  //utility functions
   function filterIssues(issues, type_id) {
     return issues.filter((issue) => issue.issue_type_id === type_id);
   }
@@ -154,24 +153,7 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
                   : null
               }
               required={true}
-              control={Select}>
-              {/* <label style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "1em" }}>
-                Problema Observado
-              </label> */}
-
-              {/*  <Select
-                placeholder="¿Cuál es el problema?"
-                options={filteredIssues ? dataToOptions(filteredIssues) : null}
-                value={formData.issue}
-                onChange={handleChange}
-                id="issue"
-                error={
-                  formData.issue == "" && submitAttempt
-                    ? { content: "Avería requerida", ponting: "below" }
-                    : null
-                }
-              /> */}
-            </Form.Field>
+              control={Select}></Form.Field>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -195,7 +177,7 @@ export default function CreateReportForm({ departments, issueTypes, issues, setE
               <Message.Content>
                 {error
                   ? error >= 422
-                    ? "Algo ha salido mal. Verifique que ningún campos requerido esté vacío."
+                    ? "Algo ha salido mal. Verifique que ningún campo requerido esté vacío."
                     : error.includes("Network") || error == 404
                     ? "El servidor no está disponible"
                     : null

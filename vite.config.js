@@ -4,10 +4,8 @@ import reactRefreshPlugin from "eslint-plugin-react-refresh";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), "react-refresh"],
-  rules: {
-    "react-refresh/only-export-components": "warn",
-  },
+  plugins: [react()],
+
   server: {
     port: "3000",
     host: "ittracker.test",

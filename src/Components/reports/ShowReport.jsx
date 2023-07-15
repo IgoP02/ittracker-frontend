@@ -26,6 +26,7 @@ export default function ShowReport() {
     if (!first) {
       if (error.response) {
         toast.error(getStatusDisplayMessage(error.response.status), { position: "top-center" });
+        if (error.response.status > 400) setHttpError(true);
       } else if (error.message) {
         toast.error(getStatusDisplayMessage(error.message), {
           position: "top-center",
@@ -33,7 +34,6 @@ export default function ShowReport() {
         });
       }
     }
-    if (error.response.status > 400) setHttpError(true);
   };
   const fetchReport = async (first = true) => {
     try {
@@ -92,7 +92,7 @@ export default function ShowReport() {
   }
 
   const StatusDisplay = () => {
-    if (loggedIn) {
+    if (loggedIn.logged) {
       return (
         <StatusSelector
           handleStatusChange={handleUpdate}
@@ -117,7 +117,7 @@ export default function ShowReport() {
   };
   return (
     <div className="tableContainer">
-      <Grid centered textAlign="center" style={{ marginTop: "3em", marginRight: "0" }}>
+      <Grid centered textAlign="center" style={{ marginTop: "1em", marginRight: "0" }}>
         <Grid.Row>
           <Grid.Column>
             <Segment.Group size="medium">

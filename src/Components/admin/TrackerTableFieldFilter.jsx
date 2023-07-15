@@ -46,7 +46,7 @@ export default function TrackerTableFieldFilter({ handleFieldSearch, handleClear
         id="assignee"
         value={field.value}
         onChange={handleFieldChange}
-        action={{ icon: { name: "search" }, onClick: handleSearch }}
+        action={{ icon: { name: "search" } }}
       />
       <Button
         circular

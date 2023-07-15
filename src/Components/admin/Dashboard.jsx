@@ -152,7 +152,7 @@ export default function Dashboard() {
             <Segment.Group horizontal compact className="chartsContainer">
               <Segment size="tiny" style={{ height: "400px", width: "400px" }} textAlign="center">
                 <Label style={labelStyle} attached="top">
-                  Reportes Semanales por
+                  Reportes activos por
                   <ChartSelector
                     field={chartFields.doughChart}
                     attributes={{
@@ -177,7 +177,7 @@ export default function Dashboard() {
               </Segment>
               <Segment style={{ height: "400px", width: "600px" }} textAlign="center">
                 <Label style={labelStyle} attached="top">
-                  Reportes Activos por
+                  Reportes activos por
                   <ChartSelector
                     field={chartFields.barChart}
                     placeholder=""
@@ -214,30 +214,34 @@ export default function Dashboard() {
         <Grid.Row columns={1}>
           <Grid.Column textAlign="center" width={8}>
             <Header content="Acciones" dividing icon="configure" style={{ maxWidth: "100%" }} />
-            <Button
-              style={{ padding: "10px", margin: "5px" }}
-              content={
-                <span>
-                  <Icon name="clipboard list" size="large" /> <Icon name="user" size="large" />{" "}
-                  Reportes Tomados
-                </span>
-              }
-              color="green"
-              fluid
-              size="huge"
-              onClick={() => setModalStates({ ...modalStates, ownReports: true })}
-            />
-            <Modal
-              style={{ padding: "2em" }}
-              open={modalStates.ownReports}
-              onClose={() => setModalStates({ ...modalStates, ownReports: false })}>
-              <Header
-                content={`Reportes tomados por ${getName()}`}
-                icon="clipboard list"
-                attached
-              />
-              <OwnReports />
-            </Modal>
+            {loggedIn.username != "admin" && (
+              <>
+                <Button
+                  style={{ padding: "10px", margin: "5px" }}
+                  content={
+                    <span>
+                      <Icon name="clipboard list" size="large" /> <Icon name="user" size="large" />{" "}
+                      Reportes Tomados
+                    </span>
+                  }
+                  color="green"
+                  fluid
+                  size="huge"
+                  onClick={() => setModalStates({ ...modalStates, ownReports: true })}
+                />
+                <Modal
+                  style={{ padding: "2em" }}
+                  open={modalStates.ownReports}
+                  onClose={() => setModalStates({ ...modalStates, ownReports: false })}>
+                  <Header
+                    content={`Reportes tomados por ${getName()}`}
+                    icon="clipboard list"
+                    attached
+                  />
+                  <OwnReports />
+                </Modal>
+              </>
+            )}
             <Button
               style={{ padding: "10px", margin: "5px" }}
               content={

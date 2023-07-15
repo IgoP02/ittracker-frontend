@@ -69,7 +69,7 @@ export default function MaintenanceMenu() {
       <Header
         content={
           <span>
-            <Icon name="eraser" /> Limpieza de reportes Inactivos
+            <Icon name="eraser" /> Limpieza de reportes inactivos
           </span>
         }
       />

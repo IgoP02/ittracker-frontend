@@ -19,9 +19,6 @@ function NavBar() {
   const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(location.pathname.split("/")[1] || "home");
-  useEffect(() => {
-    console.log(loggedIn);
-  }, []);
 
   function handleItemClick(e, { name }) {
     if (!loggedIn && name == "admin") {
@@ -29,7 +26,7 @@ function NavBar() {
       return;
     }
     setActiveItem(name);
-    console.log(name);
+    // console.log(name);
   }
 
   function handleLogOut() {
@@ -51,14 +48,16 @@ function NavBar() {
     setIsModalOpen(true);
   }
   const UserGreeting = () => {
-    if (loggedIn.logged) {
+    if (loggedIn) {
       const message =
-        loggedIn.username != "admin" && loggedIn.name ? (
+        loggedIn.username != "admin" && loggedIn.logged ? (
           <>
             Bienvenido/a, <span style={{ fontWeight: "bold" }}> {loggedIn.name} </span>
           </>
-        ) : (
+        ) : loggedIn.logged ? (
           <span style={{ opacity: "0.5" }}>Sesión de administrador</span>
+        ) : (
+          ""
         );
       return (
         <Menu.Item name="loggedUser">
