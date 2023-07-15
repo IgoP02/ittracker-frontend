@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Header, Input, Label, Message, Segment } from "semantic-ui-react";
 import { AxiosAdmin } from "../utils/axiosClients";
-import { getToken } from "../utils/manageLogin";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({ username: "", email: "", password: "", name: "" });
@@ -62,7 +61,7 @@ export default function RegisterForm() {
           name="name"
           type="text"
           value={formData.name}
-          label="Name"
+          label="Nombre y Apellido"
           error={
             (/^[A-Z]\w+\b(\s[A-Z])?\s\b[A-Z]\w+$/g.test(formData.name) == true &&
               !/\d/g.test(formData.name)) ||
@@ -74,7 +73,7 @@ export default function RegisterForm() {
                   ? "Nombre No "
                   : null
                 : null
-              : "Formato de nombre inválido"
+              : "Formato de nombre inválido (Nombre Apellido, o Nombre N Apellido son formatos válidos) "
           }
           onChange={handleChange}
         />
@@ -85,7 +84,7 @@ export default function RegisterForm() {
           name="username"
           type="text"
           value={formData.username}
-          label="Username"
+          label="Nombre de usuario"
           error={
             errors.username
               ? errors.username == true
@@ -103,7 +102,7 @@ export default function RegisterForm() {
           name="email"
           id="email"
           type="email"
-          label="Email"
+          label="Correo Electrónico"
           value={formData.email}
           error={
             errors.email && typeof errors.email != "object"
@@ -122,7 +121,7 @@ export default function RegisterForm() {
           name="password"
           id="password"
           type="password"
-          label="Password"
+          label="Contraseña"
           value={formData.password}
           error={
             errors.password

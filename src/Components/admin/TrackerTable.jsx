@@ -1,29 +1,31 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Table,
-  Pagination,
   Grid,
   Select,
   Loader,
   Segment,
   Message,
-  Checkbox,
   Label,
-  Input,
-  Button,
   Statistic,
+  Container,
 } from "semantic-ui-react";
 import SortableTHead from "../SortableTHead";
 import SortableTableBody from "./SortableTableBody";
 import { AxiosAdmin } from "../utils/axiosClients";
 import getStatusDisplayMessage from "../utils/getStatusDisplayMessage";
-import { ToastContainer } from "react-toastify";
+import TrackerTableFieldFilter from "./TrackerTableFieldFilter";
+import TrackerTableStatusFilters from "../TrackerTableStatusFilters";
+import TrackerTablePagination from "./TrackerTablePagination";
 
 export default function TrackerTable() {
-  const assigneeRef = useRef();
   const [perPage, setPerPage] = useState(10);
-  const [filters, setFilters] = useState({ active: false, pending: false });
-  const [assignee, setAssignee] = useState("");
+  const [filters, setFilters] = useState({
+    active: false,
+    pending: false,
+    assignee: "",
+    department: "",
+  });
   const [tableData, setTableData] = useState();
   const [isLoading, setisLoading] = useState(true);
   const [error, setError] = useState();
@@ -31,7 +33,7 @@ export default function TrackerTable() {
   const [lastPage, setLastPage] = useState();
   const [total, setTotal] = useState(0);
 
-  const getData = async (currentPage, perPage, assignee) => {
+  const getData = async (currentPage, perPage, assignee, department) => {
     try {
       const { data } = await AxiosAdmin.get("/reports", {
         params: {
@@ -40,6 +42,7 @@ export default function TrackerTable() {
           active: filters.active,
           pending: filters.pending,
           assignee: assignee,
+          department: department,
         },
       });
 
@@ -62,7 +65,7 @@ export default function TrackerTable() {
   };
   useEffect(() => {
     if (!tableData && !error) {
-      getData(currentPage, perPage, assignee);
+      getData(currentPage, perPage, filters.assignee, filters.department);
     } else if (tableData) {
       setisLoading(false);
     }
@@ -70,43 +73,46 @@ export default function TrackerTable() {
 
   useEffect(() => {
     console.log(currentPage);
-    getData(currentPage, perPage, assignee);
+    getData(currentPage, perPage, filters.assignee, filters.department);
   }, [currentPage, perPage, filters]);
 
-  const columns = [
-    { label: "ID", key: "id", sortable: true },
-    { label: "Department", key: "department", sortable: true },
-    { label: "Type", key: "type", sortable: true },
-    { label: "Issue", key: "issue", sortable: true },
-    { label: "Description", key: "description", sortable: false },
-    { label: "Status", key: "status", sortable: true },
-    { label: "Priority", key: "priority", sortable: true },
-    { label: "Assignee", key: "assignee", sortable: true },
-    { label: "Date", key: "date", sortable: true },
-  ];
+  const columns = useMemo(
+    () => [
+      { label: "Código", key: "id", sortable: true },
+      { label: "Departmento", key: "department", sortable: true },
+      { label: "Tipo", key: "type", sortable: true },
+      { label: "Problema", key: "issue", sortable: true },
+      { label: "Descripción", key: "description", sortable: false },
+      { label: "Estado", key: "status", sortable: true },
+      { label: "Prioridad", key: "priority", sortable: true },
+      { label: "Analista", key: "assignee", sortable: true },
+      { label: "Fecha", key: "date", sortable: true },
+    ],
+    []
+  );
+  const handleFilterChange = (e, d) => {
+    console.log(d.id, " changed");
+    setFilters((oldFilters) => ({ ...filters, [d.id]: !oldFilters[d.id] }));
+  };
 
-  function handleFilterChange(e, d) {
-    if (d.id == "assignee") {
-      console.log("assignee changed");
-      setAssignee(d.value);
-    } else {
-      console.log(d.id, " changed");
+  const handleFieldSearch = (assignee, department) => {
+    if (assignee) setFilters({ ...filters, assignee: assignee });
+    if (department) setFilters({ ...filters, department: department });
 
-      setFilters((oldFilters) => ({ ...filters, [d.id]: !oldFilters[d.id] }));
-    }
-  }
+    getData(currentPage, perPage, assignee, department);
+  };
 
-  const handleAssigneeSearch = useCallback(() => {
-    getData(currentPage, perPage, assignee);
-  }, [currentPage, perPage, assignee]);
-
-  function handlePageCount(e, d) {
+  const handleClearField = () => {
+    getData(currentPage, perPage, "", "");
+  };
+  const handlePageCount = (e, d) => {
     setPerPage(d.value);
-  }
-  function handlePageChange(e, d) {
+  };
+
+  const handlePageChange = (e, d) => {
     console.log(d.activePage);
     setCurrentPage(d.activePage);
-  }
+  };
 
   function handleSorting(key, sortOrder) {
     if (key) {
@@ -142,104 +148,89 @@ export default function TrackerTable() {
       </Segment>
     );
   }
+
+  const TablePaginator = ({ size = "huge", key }) => {
+    return (
+      <TrackerTablePagination
+        currentPage={currentPage}
+        handlePageChange={handlePageChange}
+        lastPage={lastPage}
+        key={key}
+        size={size}
+      />
+    );
+  };
+  const widescreenToolbar = (tablet = false) => (
+    <Segment.Group horizontal size="tiny">
+      <Segment basic>
+        <Select
+          defaultValue={20}
+          compact
+          options={displayRowOptions(5)}
+          onChange={handlePageCount}
+        />
+        <Label style={{ border: "none", fontWeight: "normal" }} basic size="medium">
+          {tablet ? "" : "Reportes por página"}
+        </Label>
+      </Segment>
+      <TrackerTableStatusFilters filters={filters} handleFilterChange={handleFilterChange} />
+      <Segment basic>
+        <TrackerTableFieldFilter
+          handleFieldSearch={handleFieldSearch}
+          handleClearField={handleClearField}
+        />
+      </Segment>
+      <Segment>
+        <Statistic label="Total" value={total} size="tiny" />
+      </Segment>
+    </Segment.Group>
+  );
   return (
-    <Grid style={{ width: "100%" }}>
-      <ToastContainer />
-      <Grid.Row style={{ padding: "0px" }}>
-        <Grid.Row>
-          <Segment.Group horizontal>
+    <Container>
+      <Grid>
+        <Grid.Row only="mobile" columns={1}>
+          <Grid.Column>
             <Segment basic>
-              <Select
-                style={{ marginLeft: "2em" }}
-                defaultValue={20}
-                compact
-                options={displayRowOptions(5)}
-                onChange={handlePageCount}
+              <TrackerTableFieldFilter
+                handleFieldSearch={handleFieldSearch}
+                handleClearField={handleClearField}
               />
-              <Label
-                style={{ border: "none", paddingRight: "0.5em", fontWeight: "normal" }}
-                basic
-                size="large">
-                Reportes por Página
-              </Label>
             </Segment>
+          </Grid.Column>
+          <Grid.Column>
             <Segment basic>
-              <Checkbox
-                checked={filters.active}
-                style={{ paddingTop: "1em" }}
-                label="Reportes Activos"
-                slider
-                id="active"
-                onChange={handleFilterChange}
+              <TrackerTableStatusFilters
+                filters={filters}
+                handleFilterChange={handleFilterChange}
               />
             </Segment>
-            <Segment basic>
-              <Checkbox
-                checked={filters.pending}
-                style={{ paddingTop: "1em" }}
-                label="No asignados"
-                slider
-                id="pending"
-                onChange={handleFilterChange}
-              />
-            </Segment>
-            <Segment basic>
-              <Label
-                style={{ border: "none", paddingRight: "0.5em", fontWeight: "normal" }}
-                basic
-                size="large">
-                Analista:
-              </Label>
-              <Input
-                // label={{ content: "Analista:", style: { border: "none" }, basic: true }}
-                style={{ paddingTop: "0.5em", paddingRight: "0.5em" }}
-                size="mini"
-                id="assignee"
-                value={assignee}
-                onChange={handleFilterChange}
-                action={{ icon: { name: "search" }, onClick: handleAssigneeSearch }}
-                ref={assigneeRef}
-              />
-              <Button
-                circular
-                icon="eraser"
-                content="Limpiar"
-                size="tiny"
-                color="google plus"
-                onClick={() => {
-                  setAssignee("");
-                  getData(currentPage, perPage, "");
-                }}
-              />
-            </Segment>
-            <Segment>
-              <Statistic label="Total" value={total} size="tiny" />
-            </Segment>
-          </Segment.Group>
+          </Grid.Column>
         </Grid.Row>
-        <Table selectable striped sortable>
-          <Table.Header>
-            <SortableTHead columns={columns} handleSorting={handleSorting} />
-          </Table.Header>
-          {tableData ? (
+        <Grid.Row only="computer">{widescreenToolbar()}</Grid.Row>
+        <Grid.Row only="tablet">{widescreenToolbar(true)}</Grid.Row>
+        <Segment basic style={{ margin: "auto", padding: "0.5em" }} textAlign="center">
+          <TablePaginator size="tiny" key="tPagTop" />
+        </Segment>
+        <Container className="tableContainer">
+          <Table selectable striped sortable color="grey" className="responsiveTrackerTable">
+            <Table.Header className="sticky">
+              <SortableTHead columns={columns} handleSorting={handleSorting} />
+            </Table.Header>
+
             <SortableTableBody
               columns={columns}
               tableData={tableData}
               setTableData={setTableData}
             />
-          ) : null}
-        </Table>
-      </Grid.Row>
-      <Grid.Row centered textAlign="center" style={{ padding: "0px" }}>
-        <Grid.Column textAlign="center">
-          <Pagination
-            totalPages={lastPage}
-            activePage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          </Table>
+        </Container>
+        <Grid.Column only="computer" textAlign="center" width={16}>
+          <Segment basic style={{ margin: "auto", padding: "0" }} textAlign="center">
+            <TablePaginator key="tPagBottom" />
+          </Segment>
         </Grid.Column>
-      </Grid.Row>
-    </Grid>
+      </Grid>
+    </Container>
   );
 }
 

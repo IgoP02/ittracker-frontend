@@ -4,6 +4,8 @@ import { Select } from "semantic-ui-react";
 export default function ChartSelector({
   options,
   onChange,
+  onOpen,
+  onClose,
   attributes,
   placeholder = "Reportes por...",
   field,
@@ -15,6 +17,8 @@ export default function ChartSelector({
       placeholder={placeholder}
       options={options}
       onChange={onChange}
+      onOpen={onOpen}
+      onClose={onClose}
       value={field}>
       {children}
     </Select>

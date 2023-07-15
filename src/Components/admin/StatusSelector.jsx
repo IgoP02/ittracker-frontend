@@ -66,7 +66,6 @@ export default function StatusSelector({
         handleStatusChange(capitalize(d.value), reportId);
       }
     }
-    //console.log("selected", selected);
   }
   if (isLoading) {
     return <p>Cargando</p>;
@@ -77,7 +76,7 @@ export default function StatusSelector({
       value={status.selected}
       options={options}
       direction="right"
-      style={{ ...statusStyles[currentStatus.at(0)], borderRadius: "0px" }}
+      style={{ ...statusStyles[currentStatus.at(0)], borderRadius: "2px" }}
       onChange={handleChange}
       fluid
     />

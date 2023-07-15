@@ -1,14 +1,12 @@
 import logo from "../assets/invecem_logo.png";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button, Container, Image, Menu } from "semantic-ui-react";
 import { LoginContext } from "../main";
 import LogPopup from "./LogPopup";
 import {
   deleteToken,
-  getName,
   getToken,
-  getUserName,
   removeLogged,
   removeName,
   removeUserName,
@@ -23,12 +21,12 @@ function NavBar() {
   const [activeItem, setActiveItem] = useState(location.pathname.split("/")[1] || "home");
 
   function handleItemClick(e, { name }) {
-    if (loggedIn == false && name == "admin") {
+    if (!loggedIn && name == "admin") {
       setActiveItem(location.pathname.split("/")[1] || "home");
       return;
     }
     setActiveItem(name);
-    console.log(name);
+    // console.log(name);
   }
 
   function handleLogOut() {
@@ -38,18 +36,38 @@ function NavBar() {
         Accept: "Application/json",
       },
     });
-    setLoggedIn(false);
     removeUserName();
     removeName();
     removeLogged();
     deleteToken();
+    setLoggedIn(false);
     setActiveItem("home");
     navigate("/", true);
   }
   function toggleModal() {
     setIsModalOpen(true);
   }
-
+  const UserGreeting = () => {
+    if (loggedIn) {
+      const message =
+        loggedIn.username != "admin" && loggedIn.logged ? (
+          <>
+            Bienvenido/a, <span style={{ fontWeight: "bold" }}> {loggedIn.name} </span>
+          </>
+        ) : loggedIn.logged ? (
+          <span style={{ opacity: "0.5" }}>Sesión de administrador</span>
+        ) : (
+          ""
+        );
+      return (
+        <Menu.Item name="loggedUser">
+          <p id="greeting" style={{ fontSize: "1.1em" }}>
+            {message}
+          </p>
+        </Menu.Item>
+      );
+    }
+  };
   return (
     <>
       <LogPopup isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
@@ -57,7 +75,7 @@ function NavBar() {
         <Container>
           <Menu.Item header>
             <Image size="mini" src={logo} />
-            <b>ITTracker</b>
+            <b id="logoText">ITTracker</b>
           </Menu.Item>
           <Menu.Item
             name="home"
@@ -68,8 +86,9 @@ function NavBar() {
             Inicio
           </Menu.Item>
           <Menu.Item
+            disabled={!loggedIn.logged}
             name="admin"
-            to="admin"
+            to={loggedIn.logged && "admin"}
             active={activeItem === "admin"}
             as={Link}
             onClick={handleItemClick}>
@@ -78,20 +97,14 @@ function NavBar() {
           <Menu.Item name="logItem" style={{ marginRight: "1em" }} position="right">
             <Button
               name="logItem"
-              icon={loggedIn ? { name: "sign out", size: "large" } : null}
-              content={loggedIn ? "Cerrar Sesión" : "Iniciar Sesión"}
-              color={loggedIn ? "red" : "blue"}
+              icon={loggedIn.logged ? { name: "sign out", size: "large" } : null}
+              content={loggedIn.logged ? "Cerrar Sesión" : "Iniciar Sesión"}
+              color={loggedIn.logged ? "red" : "blue"}
               style={{ borderRadius: "2px" }}
-              onClick={loggedIn ? handleLogOut : toggleModal}
+              onClick={loggedIn.logged ? handleLogOut : toggleModal}
             />
           </Menu.Item>
-          {loggedIn && getUserName() != "admin" ? (
-            <Menu.Item name="loggedUser">
-              <p style={{ fontSize: "1.1em" }}>
-                Bienvenido/a, <span style={{ fontWeight: "bold" }}> {getName()} </span>{" "}
-              </p>
-            </Menu.Item>
-          ) : null}
+          {<UserGreeting />}
         </Container>
       </Menu>
     </>

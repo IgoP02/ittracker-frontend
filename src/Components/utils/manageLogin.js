@@ -5,6 +5,8 @@ import Cookies from "js-cookie";
  * @param token
  */
 function setToken(token) {
+  console.log("token");
+
   Cookies.set("auth_token", token);
 }
 /**
@@ -37,42 +39,55 @@ function removeLogged() {
  * @returns {boolean}
  */
 function isLogged() {
-  return Cookies.get("logged") ? true : false;
+  console.log(Cookies.get("logged"));
+  return Cookies.get("logged");
 }
 /**
  * set username to cookies
  */
 function setUserName(userName) {
-  localStorage.setItem("user_name", userName);
+  console.log("username");
+  Cookies.set("user_name", userName);
 }
 /**
  * Gets username from cookies if set
  * @returns {string}
  */
 function getUserName() {
-  return localStorage.getItem("user_name");
+  return Cookies.get("user_name");
 }
 /**
  * Removes name from cookies if set
  */
 function removeUserName() {
-  return localStorage.removeItem("user_name");
+  return Cookies.remove("user_name");
 }
 
 function getName() {
-  return localStorage.getItem("name");
+  return Cookies.get("name");
 }
 /**
  * Removes name from cookies if set
  */
 function removeName() {
-  return localStorage.removeItem("name");
+  return Cookies.remove("name");
 }
 /**
  * Sets name to cookies
  */
 function setName(name) {
-  localStorage.setItem("name", name);
+  console.log("name");
+
+  Cookies.set("name", name);
+}
+/*
+ * Run all cookie clearing functions
+ */
+function logOut() {
+  removeLogged();
+  removeName();
+  removeUserName();
+  deleteToken();
 }
 
 export {
@@ -88,4 +103,5 @@ export {
   setName,
   getName,
   removeName,
+  logOut,
 };

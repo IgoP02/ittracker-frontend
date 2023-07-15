@@ -17,7 +17,6 @@ import TestComponent from "./Components/TestComponent";
 import "react-toastify/dist/ReactToastify.css";
 import "./assets/App.css";
 import Tracker from "./Components/admin/Tracker";
-import { isLogged } from "./Components/utils/manageLogin";
 import SuccessPage from "./Components/reports/SuccessPage";
 import ShowReport from "./Components/reports/ShowReport";
 import {
@@ -31,6 +30,7 @@ import {
 } from "chart.js";
 import dataLabelsPlugin from "chartjs-plugin-datalabels";
 import { ToastContainer } from "react-toastify";
+import { getName, getUserName, isLogged } from "./Components/utils/manageLogin";
 
 export const LoginContext = createContext();
 ChartJS.register(
@@ -43,7 +43,11 @@ ChartJS.register(
   dataLabelsPlugin
 );
 function Main() {
-  const [loggedIn, setLoggedIn] = useState(isLogged(false));
+  const [loggedIn, setLoggedIn] = useState({
+    username: getUserName(),
+    name: getName(),
+    logged: isLogged(),
+  });
   const route = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<GlobalLayout />}>
